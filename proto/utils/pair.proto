@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package org.infinity.idm.utils;
+
+message Pair {
+    string key = 1;//键
+    int64 value = 2;//值//by ticks
+}

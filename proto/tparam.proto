@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package org.infinity.idm;
+
+import "ppatt.proto";
+
+message TrackParam {
+    string name = 1;//参数名称
+    double vMax = 2;//最大值
+    double vMin = 3;//最小值
+    double vDefault = 4;//默认值
+
+    string color = 5;//参数颜色
+
+    repeated org.infinity.idm.ParamPattern patterns = 6;//片段
+}

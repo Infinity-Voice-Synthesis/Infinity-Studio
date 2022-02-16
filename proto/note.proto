@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package org.infinity.idm;
+
+import "utils/pair.proto";
+import "nparam.proto";
+
+message Note {
+    uint32 startBeat = 1;//开始的拍号
+    uint32 startTick = 2;//开始位置在当前拍中位置//每拍480 ticks
+    uint64 length = 3;//音符长度//by ticks
+    uint32 pitch = 4;//音高
+
+    string name = 5;//音符名称
+    string timbre = 6;//声库音色
+    repeated org.infinity.idm.utils.Pair phonemes = 7;//音素列表
+
+    string flags = 8;//字符型参数，向UTAU兼容
+
+    bool consonant = 9;//开头辅音
+
+    repeated org.infinity.idm.NoteParam params = 10;//参数
+}

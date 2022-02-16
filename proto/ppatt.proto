@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package org.infinity.idm;
+
+import "point.proto";
+
+message ParamPattern {
+    uint32 startBeat = 1;//开始位置，概念与infinity.Note相同
+    uint32 startTick = 2;//每拍480ticks
+    uint64 length = 3;//by ticks
+
+    repeated org.infinity.idm.Point points = 4;//点，通过三次样条插值生成曲线
+}
+//另：当两个点X值重合，曲线不连续（不可导？）

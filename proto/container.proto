@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package org.infinity.idm;
+
+message Container {
+    uint32 startBeat = 1;//概念同infinity.Note
+    uint32 startTick = 2;//每拍480ticks
+    uint64 length = 3;//by ticks
+
+    string pattern = 4;//关联样式
+}

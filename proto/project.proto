@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package org.infinity.idm;
+
+import "track.proto";
+import "pattern.proto";
+
+message Project {
+    uint32 time = 1;//总时长
+    uint32 beat = 2;//拍号
+    double tempo = 3;//曲速
+    uint64 sRate = 4;//采样率
+    uint32 bit = 5;//位数
+
+    uint32 quantize = 6;//量化
+
+    string editor = 7;//编辑器记录
+    repeated string authors = 8;//作者编辑记录
+
+    repeated org.infinity.idm.Track tracks = 9;//轨道
+    repeated org.infinity.idm.Pattern patterns = 10;//样式
+}

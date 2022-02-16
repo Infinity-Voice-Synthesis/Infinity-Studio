@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package org.infinity.idm;
+
+import "container.proto";
+
+message Track {
+    string name = 1;//轨道名称
+    string color = 2;//轨道颜色
+
+    bool mute = 8;//静音
+    bool solo = 9;//独奏
+
+    double gain = 10;//激励
+    double pan = 11;//声像
+    double mix = 12;//混合
+
+    repeated org.infinity.idm.Container containers = 13;//音频片段
+}

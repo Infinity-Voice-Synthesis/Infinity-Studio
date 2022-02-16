@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package org.infinity.idm;
+
+import "note.proto";
+import "tparam.proto";
+
+message Pattern {
+    enum Type {
+        EMPTY = 0;//空片段
+        MIDI = 1;//midi片段
+        WAVE = 2;//波形片段
+    }
+
+    string name = 1;//名称
+    Type type = 2;//类型
+
+    string file = 3;//关联波形文件
+    uint64 deviation = 4;//片段开始位置距音频开头时间//by ticks
+
+    string library = 5;//声库
+    string dictionary = 6;//字典
+    string timbreA = 7;//音色交叉，A/B
+    string timbreB = 8;//for XSY
+
+    repeated org.infinity.idm.Note notes = 9;//音符
+    repeated org.infinity.idm.TrackParam params = 10;//参数
+}

@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package org.infinity.idm;
+
+message Point {
+    double x = 1;//字面意思，不注释了
+    double y = 2;//保存0~1相对值
+}

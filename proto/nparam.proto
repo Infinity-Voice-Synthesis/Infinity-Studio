@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package org.infinity.idm;
+
+message NoteParam {
+    string name = 1;//参数名称
+    double vMax = 2;//最大值
+    double vMin = 3;//最小值
+    double vDefault = 4;//默认值
+    double value = 5;//当前值
+}
