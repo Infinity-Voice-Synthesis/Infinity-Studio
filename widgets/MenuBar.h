@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include "utils/Config.h"
 
 class MenuBar :
     public juce::MenuBarComponent,
@@ -7,6 +8,7 @@ class MenuBar :
 {
 public:
     MenuBar();
+    ~MenuBar();
 
     void init();
 private:
@@ -15,6 +17,18 @@ private:
     void menuItemSelected(int menuItemID, int topLevelMenuIndex)override;
 
     juce::StringArray menuBarNames;
+
+    juce::StringArray menuBarItemId = {
+        "MMB_File",
+        "MMB_Edit",
+        "MMB_View",
+        "MMB_Modify",
+        "MMB_Project",
+        "MMB_Transport",
+        "MMB_Automatic",
+        "MMB_Config",
+        "MMB_Misc"
+    };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MenuBar)
 };

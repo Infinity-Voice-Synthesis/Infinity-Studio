@@ -5,11 +5,19 @@ MenuBar::MenuBar()
 
 }
 
+MenuBar::~MenuBar()
+{
+	this->setModel(nullptr);
+}
+
 void MenuBar::init()
 {
-	this->menuBarNames.add("test1");
-	this->menuBarNames.add("test2");
+	this->menuBarNames.clear();
+	for (auto& s : this->menuBarItemId) {
+		this->menuBarNames.add(Config::tr(std::move(s)));
+	}
 	this->menuItemsChanged();
+	this->setModel(this);
 }
 
 juce::StringArray MenuBar::getMenuBarNames()

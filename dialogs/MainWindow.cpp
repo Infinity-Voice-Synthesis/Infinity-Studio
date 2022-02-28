@@ -7,7 +7,7 @@ MainWindow::MainWindow(juce::String name)
         DocumentWindow::TitleBarButtons::allButtons)
 {
     this->setUsingNativeTitleBar(true);
-    this->central.reset(new CentralWidget);
+    this->central = std::make_unique<CentralWidget>();
     this->central->setSize(800, 600);
     this->central->setVisible(true);
     this->setContentOwned(this->central.get(), true);

@@ -24,7 +24,9 @@ public:
         Config::refreshConfigs();
         Config::refreshTranslates();
 
-        this->mainWindow.reset(new MainWindow(getApplicationName()));
+        this->loadFont(Config::tsFull("main", "font"));
+
+        this->mainWindow = std::make_unique<MainWindow>(getApplicationName());
         this->mainWindow->init();
         this->mainWindow->setVisible(true);
     }
@@ -37,6 +39,7 @@ public:
     void systemRequestedQuit() override
     {
         google::protobuf::ShutdownProtobufLibrary();
+        Config::destory();
         this->quit();
     }
 
@@ -46,6 +49,24 @@ public:
 
 private:
     std::unique_ptr<MainWindow> mainWindow;
+
+    void loadFont(juce::String&& path)
+    {
+        juce::File file(path);
+        juce::FileInputStream stream(file);
+
+        if (stream.failedToOpen()) {
+            return;
+        }
+
+        size_t fileSize = stream.getTotalLength();
+
+        std::unique_ptr<char[]> fontData(new char[fileSize]);
+        stream.read(fontData.get(), fileSize);
+
+        juce::Typeface::Ptr&& typeface = juce::Typeface::createSystemTypefaceFor(fontData.get(), fileSize);
+        juce::LookAndFeel::getDefaultLookAndFeel().setDefaultSansSerifTypeface(typeface);
+    }
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(InfinityStudioApplication)
 };

@@ -3,7 +3,7 @@
 
 CentralWidget::CentralWidget()
 {
-	this->menuBar.reset(new MenuBar);
+	this->menuBar = std::make_unique<MenuBar>();
 	this->addChildComponent(this->menuBar.get());
 	this->menuBar->setVisible(true);
 }

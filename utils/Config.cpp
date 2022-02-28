@@ -1,42 +1,109 @@
 #include "Config.h"
 
-Config Config::_config;
+std::unique_ptr<Config> Config::_config = std::make_unique<Config>();
 
 Config::Config()
+	:componentPath("packages/"),
+	configPath("configs/"),
+	themePath("themes/"),
+	translatePath("translates/"),
+	scriptPath("scripts/"),
+	srcPath("src/"),
+	palettePath("palettes/")
 {
 	Config::configs = std::make_unique<juce::var>();
 	Config::translates = std::make_unique<juce::var>();
+	Config::theme = std::make_unique<juce::var>();
+	Config::themeSources = std::make_unique<juce::var>();
 }
 
 void Config::init(const juce::String& path, const juce::String& branch, const juce::String& package)
 {
-	Config::_config.path = path;
-	Config::_config.branch = branch;
-	Config::_config.package = package;
+	Config::_config->path = path;
+	Config::_config->branch = branch;
+	Config::_config->package = package;
+}
+
+void Config::destory()
+{
+	Config::_config = nullptr;
 }
 
 void Config::refreshConfigs()
 {
-	const juce::String& configPath = Config::_config.getConfigPath();
+	const juce::String& configPath = Config::_config->getConfigPath();
 	const juce::String configFile = configPath + "config.json";
 
-	juce::File file(configFile);
-	*(Config::_config.configs.get()) = juce::JSON::parse(file);
+	juce::File cFile(configFile);
+	*(Config::_config->configs.get()) = juce::JSON::parse(cFile);
+
+	const juce::String& themePath = Config::_config->getThemeFilePath();
+	const juce::String& themeFile = themePath + "config.json";
+	const juce::String& themeSrcFile = themePath + "source.json";
+
+	juce::File tFile(themeFile);
+	*(Config::_config->theme.get()) = juce::JSON::parse(tFile);
+
+	juce::File tsFile(themeSrcFile);
+	*(Config::_config->themeSources.get()) = juce::JSON::parse(tsFile);
 }
 
 void Config::refreshTranslates()
 {
-	const juce::String& translatePath = Config::_config.getTranslatePath();
-	const juce::String& lanName = (*(Config::_config.configs.get()))["language"].toString();
+	const juce::String& translatePath = Config::_config->getTranslatePath();
+	const juce::String& lanName = Config::cf("language");
 	const juce::String translateFile = translatePath + lanName + ".json";
 
 	juce::File file(translateFile);
-	*(Config::_config.translates) = juce::JSON::parse(file);
+	*(Config::_config->translates) = juce::JSON::parse(file);
 }
 
-juce::String Config::tr(const juce::String&& s)
+juce::String Config::cf(juce::String&& key)
 {
-	return (*(Config::_config.translates))[s.toStdString().c_str()].toString();
+	return Config::get()[key.toStdString().c_str()].toString();
+}
+
+juce::String Config::tr(juce::String&& s)
+{
+	return Config::getTrans()[s.toStdString().c_str()].toString();
+}
+
+juce::String Config::tm(juce::String&& obj, juce::String&& key)
+{
+	return Config::getTheme()[obj.toStdString().c_str()][key.toStdString().c_str()].toString();
+}
+
+juce::String Config::ts(juce::String&& obj, juce::String&& key)
+{
+	return Config::getThemeSrc()[obj.toStdString().c_str()][key.toStdString().c_str()].toString();
+}
+
+juce::String Config::tsFull(juce::String&& obj, juce::String&& key)
+{
+	return juce::String(
+		Config::_config->getThemeSourcePath() +
+		Config::ts(std::move(obj), std::move(key))
+	);
+}
+
+juce::var& Config::get()
+{
+	return *(Config::_config->configs);
+}
+
+juce::var& Config::getTrans()
+{
+	return *(Config::_config->translates);
+}
+
+juce::var& Config::getTheme()
+{
+	return *(Config::_config->theme);
+}
+
+juce::var& Config::getThemeSrc()
+{
+	return *(Config::_config->themeSources);
 }
 
 juce::String Config::getBranchPathName()
@@ -93,5 +160,30 @@ juce::String Config::getScriptPath()
 	return juce::String(
 		this->getEditorPath() +
 		this->scriptPath
+	);
+}
+
+juce::String Config::getThemeFilePath()
+{
+	return juce::String(
+		this->getThemePath() +
+		Config::cf("theme") +
+		"/"
+	);
+}
+
+juce::String Config::getThemeSourcePath()
+{
+	return juce::String(
+		Config::_config->getThemeFilePath() +
+		Config::_config->srcPath
+	);
+}
+
+juce::String Config::getThemePalettePath()
+{
+	return juce::String(
+		Config::_config->getThemeFilePath() +
+		Config::_config->palettePath
 	);
 }
