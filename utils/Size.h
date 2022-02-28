@@ -6,4 +6,4 @@ public:
 	static double menuBar_height;
 };
 
-double Size::menuBar_height = 0.03;
+double Size::menuBar_height = 0.015;

@@ -152,6 +152,7 @@
     <ClCompile Include="widgets\MenuBar.cpp" />
     <ClCompile Include="widgets\CentralWidget.cpp" />
     <ClCompile Include="utils\Data.cpp" />
+    <ClCompile Include="utils\Device.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JuceLibraryCode\JuceHeader.h" />
@@ -321,6 +322,7 @@
     <ClInclude Include="widgets\CentralWidget.h" />
     <ClInclude Include="utils\Size.h" />
     <ClInclude Include="utils\Data.h" />
+    <ClInclude Include="utils\Device.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc">

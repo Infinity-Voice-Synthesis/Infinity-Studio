@@ -1,8 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include <JuceHeader.h>
 #include "dialogs/MainWindow.h"
 #include "google/protobuf/api.pb.h"
+#include "utils/Config.h"
 
 class InfinityStudioApplication : public juce::JUCEApplication
 {
@@ -15,11 +16,16 @@ public:
 
     void initialise(const juce::String& commandLine) override
     {
+        Config::init(
+            juce::String("D:/develop/Infinity/"),
+            juce::String("main"),
+            juce::String("org.infinitysvs.infinitystudio")
+        );
+        Config::refreshConfigs();
+        Config::refreshTranslates();
 
         this->mainWindow.reset(new MainWindow(getApplicationName()));
-
         this->mainWindow->init();
-
         this->mainWindow->setVisible(true);
     }
 
@@ -41,4 +47,5 @@ public:
 private:
     std::unique_ptr<MainWindow> mainWindow;
     
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(InfinityStudioApplication)
 };

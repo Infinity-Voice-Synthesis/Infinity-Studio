@@ -15,7 +15,10 @@ void CentralWidget::init()
 
 void CentralWidget::resized()
 {
-	this->menuBar->setSize(this->getWidth(), Size::menuBar_height * this->getHeight());
+	const juce::Rectangle<int>& screenArea = Device::getScreenSize();
+	const double& screenScale = Device::getScreenScale();
+
+	this->menuBar->setSize(this->getWidth(), Size::menuBar_height * screenArea.getWidth() * screenScale);
 	this->menuBar->setTopLeftPosition(0, 0);
 }
 

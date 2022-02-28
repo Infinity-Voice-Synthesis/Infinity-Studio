@@ -1,6 +1,7 @@
 #pragma once
-#include "JuceHeader.h"
+#include <JuceHeader.h>
 #include "MenuBar.h"
+#include "utils/Device.h"
 
 class CentralWidget :
     public juce::Component
@@ -15,6 +16,7 @@ public:
 
 private:
     std::unique_ptr<MenuBar> menuBar;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CentralWidget)
 };
 

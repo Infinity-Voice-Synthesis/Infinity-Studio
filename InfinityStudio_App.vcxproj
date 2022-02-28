@@ -140,6 +140,7 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="utils\Device.cpp" />
     <ClCompile Include="utils\Data.cpp" />
     <ClCompile Include="widgets\CentralWidget.cpp" />
     <ClCompile Include="CJsonObject\cJSON.c" />
@@ -285,6 +286,7 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="utils\Device.h" />
     <ClInclude Include="utils\Data.h" />
     <ClInclude Include="utils\Size.h" />
     <ClInclude Include="widgets\CentralWidget.h" />
