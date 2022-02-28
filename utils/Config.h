@@ -15,26 +15,26 @@ public:
 	static juce::String tr(const juce::String&& s);
 
 private:
-	static juce::String getBranchPathName();
-	static juce::String getPackagePathName();
+	juce::String getBranchPathName();
+	juce::String getPackagePathName();
 
-	static juce::String getEditorPath();
-	static juce::String getConfigPath();
-	static juce::String getThemePath();
-	static juce::String getTranslatePath();
-	static juce::String getScriptPath();
+	juce::String getEditorPath();
+	juce::String getConfigPath();
+	juce::String getThemePath();
+	juce::String getTranslatePath();
+	juce::String getScriptPath();
 
-	static std::unique_ptr<juce::var> configs;
-	static std::unique_ptr<juce::var> translates;
+	std::unique_ptr<juce::var> configs;
+	std::unique_ptr<juce::var> translates;
 
-	static juce::String path;
-	static juce::String branch;
-	static juce::String package;
+	juce::String path;
+	juce::String branch;
+	juce::String package;
 
-	static juce::String componentPath;
-	static juce::String configPath;
-	static juce::String themePath;
-	static juce::String translatePath;
-	static juce::String scriptPath;
+	juce::String componentPath;
+	juce::String configPath;
+	juce::String themePath;
+	juce::String translatePath;
+	juce::String scriptPath;
 };
 

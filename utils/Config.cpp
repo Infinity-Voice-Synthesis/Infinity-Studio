@@ -2,20 +2,6 @@
 
 Config Config::_config;
 
-std::unique_ptr<juce::var> Config::configs;
-std::unique_ptr<juce::var> Config::translates;
-
-juce::String Config::path;
-juce::String Config::branch;
-juce::String Config::package;
-
-juce::String Config::componentPath = "packages/";
-
-juce::String Config::configPath = "configs/";
-juce::String Config::themePath = "themes/";
-juce::String Config::translatePath = "translates/";
-juce::String Config::scriptPath = "scripts/";
-
 Config::Config()
 {
 	Config::configs = std::make_unique<juce::var>();
@@ -24,88 +10,88 @@ Config::Config()
 
 void Config::init(const juce::String& path, const juce::String& branch, const juce::String& package)
 {
-	Config::path = path;
-	Config::branch = branch;
-	Config::package = package;
+	Config::_config.path = path;
+	Config::_config.branch = branch;
+	Config::_config.package = package;
 }
 
 void Config::refreshConfigs()
 {
-	const juce::String& configPath = Config::getConfigPath();
+	const juce::String& configPath = Config::_config.getConfigPath();
 	const juce::String configFile = configPath + "config.json";
 
 	juce::File file(configFile);
-	*(Config::configs.get()) = juce::JSON::parse(file);
+	*(Config::_config.configs.get()) = juce::JSON::parse(file);
 }
 
 void Config::refreshTranslates()
 {
-	const juce::String& translatePath = Config::getTranslatePath();
-	const juce::String& lanName = (*(Config::configs.get()))["language"].toString();
+	const juce::String& translatePath = Config::_config.getTranslatePath();
+	const juce::String& lanName = (*(Config::_config.configs.get()))["language"].toString();
 	const juce::String translateFile = translatePath + lanName + ".json";
 
 	juce::File file(translateFile);
-	*(Config::translates) = juce::JSON::parse(file);
+	*(Config::_config.translates) = juce::JSON::parse(file);
 }
 
 juce::String Config::tr(const juce::String&& s)
 {
-	return (*(Config::translates))[s.toStdString().c_str()].toString();
+	return (*(Config::_config.translates))[s.toStdString().c_str()].toString();
 }
 
 juce::String Config::getBranchPathName()
 {
-	if (Config::branch == "main") {
+	if (this->branch == "main") {
 		return juce::String("");
 	}
 	else {
-		return juce::String(Config::branch + "/");
+		return juce::String(this->branch + "/");
 	}
 }
 
 juce::String Config::getPackagePathName()
 {
-	return juce::String(Config::package + "/");
+	return juce::String(this->package + "/");
 }
 
 juce::String Config::getEditorPath()
 {
 	return juce::String(
-		Config::path +
-		Config::componentPath +
-		Config::getBranchPathName() +
-		Config::getPackagePathName()
+		this->path +
+		this->componentPath +
+		this->getBranchPathName() +
+		this->getPackagePathName()
 	);
 }
 
 juce::String Config::getConfigPath()
 {
 	return juce::String(
-		Config::getEditorPath() +
-		Config::configPath
+		this->getEditorPath() +
+		this->configPath
 	);
 }
 
 juce::String Config::getThemePath()
 {
 	return juce::String(
-		Config::getEditorPath() +
-		Config::themePath
+		this->getEditorPath() +
+		this->themePath
 	);
 }
 
 juce::String Config::getTranslatePath()
 {
 	return juce::String(
-		Config::getEditorPath() +
-		Config::translatePath
+		this->getEditorPath() +
+		this->translatePath
 	);
 }
 
 juce::String Config::getScriptPath()
 {
 	return juce::String(
-		Config::getEditorPath() +
-		Config::scriptPath
+		this->getEditorPath() +
+		this->scriptPath
 	);
 }
