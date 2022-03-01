@@ -4,6 +4,7 @@
 #include "dialogs/MainWindow.h"
 #include "google/protobuf/api.pb.h"
 #include "utils/Config.h"
+#include "menus/MenuManager.h"
 
 class InfinityStudioApplication : public juce::JUCEApplication
 {
@@ -22,9 +23,11 @@ public:
             juce::String("org.infinitysvs.infinitystudio")
         );
         Config::refreshConfigs();
-        Config::refreshTranslates();
+        Config::refreshTranslates();//配置初始化
 
-        this->loadFont(Config::tsFull("main", "font"));
+        this->loadFont(Config::tsFull("main", "font"));//载入字体
+
+        MenuManager::init();//初始化弹出菜单
 
         this->mainWindow = std::make_unique<MainWindow>(getApplicationName());
         this->mainWindow->init();
@@ -39,6 +42,7 @@ public:
     void systemRequestedQuit() override
     {
         google::protobuf::ShutdownProtobufLibrary();
+        MenuManager::destory();
         Config::destory();
         this->quit();
     }

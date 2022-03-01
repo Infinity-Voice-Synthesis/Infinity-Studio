@@ -35,17 +35,17 @@ void Config::refreshConfigs()
 	const juce::String configFile = configPath + "config.json";
 
 	juce::File cFile(configFile);
-	*(Config::_config->configs.get()) = juce::JSON::parse(cFile);
+	*(Config::_config->configs) = juce::JSON::parse(cFile);
 
 	const juce::String& themePath = Config::_config->getThemeFilePath();
 	const juce::String& themeFile = themePath + "config.json";
 	const juce::String& themeSrcFile = themePath + "source.json";
 
 	juce::File tFile(themeFile);
-	*(Config::_config->theme.get()) = juce::JSON::parse(tFile);
+	*(Config::_config->theme) = juce::JSON::parse(tFile);
 
 	juce::File tsFile(themeSrcFile);
-	*(Config::_config->themeSources.get()) = juce::JSON::parse(tsFile);
+	*(Config::_config->themeSources) = juce::JSON::parse(tsFile);
 }
 
 void Config::refreshTranslates()
