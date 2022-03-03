@@ -1,6 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "utils/Config.h"
+#include "menus/utils/MenuManager.h"
 
 class MenuBar :
     public juce::MenuBarComponent,

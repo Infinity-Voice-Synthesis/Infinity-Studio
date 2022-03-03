@@ -27,10 +27,9 @@ juce::StringArray MenuBar::getMenuBarNames()
 
 juce::PopupMenu MenuBar::getMenuForIndex(int topLevelMenuIndex, const juce::String& menuName)
 {
-	return juce::PopupMenu();
+	return MenuManager::get(this->menuBarItemId[topLevelMenuIndex]);
 }
 
 void MenuBar::menuItemSelected(int menuItemID, int topLevelMenuIndex)
 {
-
 }

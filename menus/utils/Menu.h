@@ -6,6 +6,7 @@ class Menu
 {
 public:
 	Menu();
+	void init();
 	
 protected:
 	struct Item
@@ -20,19 +21,15 @@ protected:
 			Head = 5
 		};
 		Type type = Type::Normal;
-		juce::String text;
+		juce::String id;
 		bool enable = true;
-
 		bool checked = false;
-
 		juce::String groupId;
-		bool selected = false;
-
 		juce::String subId;
 	};
 
-	virtual const juce::String getMenuId() = 0;
-	virtual const std::vector<Item> getItemList() = 0;
+	virtual const juce::String getMenuId() const = 0;
+	virtual const std::vector<Item> getItemList() const = 0;
 
 private:
 	friend class MenuManager;

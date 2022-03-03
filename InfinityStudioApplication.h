@@ -4,7 +4,7 @@
 #include "dialogs/MainWindow.h"
 #include "google/protobuf/api.pb.h"
 #include "utils/Config.h"
-#include "menus/MenuManager.h"
+#include "menus/utils/MenuManager.h"
 
 class InfinityStudioApplication : public juce::JUCEApplication
 {

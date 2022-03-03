@@ -153,9 +153,9 @@
     <ClCompile Include="widgets\CentralWidget.cpp" />
     <ClCompile Include="utils\Data.cpp" />
     <ClCompile Include="utils\Device.cpp" />
-    <ClCompile Include="menus\Menu.cpp" />
-    <ClCompile Include="menus\MenuManager.cpp" />
-    <ClCompile Include="menus\MenuStateMachine.cpp" />
+    <ClCompile Include="menus\utils\Menu.cpp" />
+    <ClCompile Include="menus\utils\MenuManager.cpp" />
+    <ClCompile Include="menus\utils\MenuStateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JuceLibraryCode\JuceHeader.h" />
@@ -326,9 +326,13 @@
     <ClInclude Include="utils\Size.h" />
     <ClInclude Include="utils\Data.h" />
     <ClInclude Include="utils\Device.h" />
-    <ClInclude Include="menus\Menu.h" />
-    <ClInclude Include="menus\MenuManager.h" />
-    <ClInclude Include="menus\MenuStateMachine.h" />
+    <ClInclude Include="menus\utils\Menu.h" />
+    <ClInclude Include="menus\utils\MenuManager.h" />
+    <ClInclude Include="menus\utils\MenuStateMachine.h" />
+    <ClInclude Include="menus\FileMenu.h" />
+    <ClInclude Include="menus\Menus.h" />
+    <ClInclude Include="menus\ImportMenu.h" />
+    <ClInclude Include="menus\ExportMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc">
