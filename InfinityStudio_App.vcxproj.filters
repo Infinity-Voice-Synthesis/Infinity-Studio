@@ -333,6 +333,15 @@
     <ClInclude Include="menus\Menus.h" />
     <ClInclude Include="menus\ImportMenu.h" />
     <ClInclude Include="menus\ExportMenu.h" />
+    <ClInclude Include="menus\EditMenu.h" />
+    <ClInclude Include="menus\ViewMenu.h" />
+    <ClInclude Include="menus\SnapMenu.h" />
+    <ClInclude Include="menus\ModifyMenu.h" />
+    <ClInclude Include="menus\ProjectMenu.h" />
+    <ClInclude Include="menus\TransportMenu.h" />
+    <ClInclude Include="menus\AutomaticMenu.h" />
+    <ClInclude Include="menus\ConfigMenu.h" />
+    <ClInclude Include="menus\MiscMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc">

@@ -289,6 +289,9 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="menus\ConfigMenu.h" />
+    <ClInclude Include="menus\AutomaticMenu.h" />
+    <ClInclude Include="menus\EditMenu.h" />
     <ClInclude Include="menus\ExportMenu.h" />
     <ClInclude Include="menus\ImportMenu.h" />
     <ClInclude Include="menus\FileMenu.h" />
@@ -296,9 +299,15 @@
     <ClInclude Include="menus\utils\MenuStateMachine.h" />
     <ClInclude Include="menus\utils\MenuManager.h" />
     <ClInclude Include="menus\utils\Menu.h" />
+    <ClInclude Include="menus\SnapMenu.h" />
+    <ClInclude Include="menus\ModifyMenu.h" />
+    <ClInclude Include="menus\ProjectMenu.h" />
+    <ClInclude Include="menus\TransportMenu.h" />
+    <ClInclude Include="menus\MiscMenu.h" />
     <ClInclude Include="utils\Device.h" />
     <ClInclude Include="utils\Data.h" />
     <ClInclude Include="utils\Size.h" />
+    <ClInclude Include="menus\ViewMenu.h" />
     <ClInclude Include="widgets\CentralWidget.h" />
     <ClInclude Include="CJsonObject\cJSON.h" />
     <ClInclude Include="CJsonObject\CJsonObject.hpp" />

@@ -14,6 +14,15 @@ void MenuManager::init()
 	(new FileMenu)->init();
 	(new ImportMenu)->init();
 	(new ExportMenu)->init();
+	(new EditMenu)->init();
+	(new ViewMenu)->init();
+	(new SnapMenu)->init();
+	(new ModifyMenu)->init();
+	(new ProjectMenu)->init();
+	(new TransportMenu)->init();
+	(new AutomaticMenu)->init();
+	(new ConfigMenu)->init();
+	(new MiscMenu)->init();
 }
 
 void MenuManager::destory()

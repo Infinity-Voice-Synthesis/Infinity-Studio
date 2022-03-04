@@ -25,7 +25,6 @@ protected:
 		bool enable = true;
 		bool checked = false;
 		juce::String groupId;
-		juce::String subId;
 	};
 
 	virtual const juce::String getMenuId() const = 0;
