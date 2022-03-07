@@ -6,7 +6,8 @@
 #include "utils/Config.h"
 #include "menus/utils/MenuManager.h"
 
-class InfinityStudioApplication : public juce::JUCEApplication
+class InfinityStudioApplication final :
+    public juce::JUCEApplication
 {
 public:
     InfinityStudioApplication() {}

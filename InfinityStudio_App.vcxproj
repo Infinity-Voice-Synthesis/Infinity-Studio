@@ -143,6 +143,8 @@
     <ClCompile Include="menus\utils\MenuStateMachine.cpp" />
     <ClCompile Include="menus\utils\MenuManager.cpp" />
     <ClCompile Include="menus\utils\Menu.cpp" />
+    <ClCompile Include="uiModels\ToolBarFactory.cpp" />
+    <ClCompile Include="widgets\ToolBar.cpp" />
     <ClCompile Include="utils\Device.cpp" />
     <ClCompile Include="utils\Data.cpp" />
     <ClCompile Include="widgets\CentralWidget.cpp" />
@@ -304,6 +306,8 @@
     <ClInclude Include="menus\ProjectMenu.h" />
     <ClInclude Include="menus\TransportMenu.h" />
     <ClInclude Include="menus\MiscMenu.h" />
+    <ClInclude Include="uiModels\ToolBarFactory.h" />
+    <ClInclude Include="widgets\ToolBar.h" />
     <ClInclude Include="utils\Device.h" />
     <ClInclude Include="utils\Data.h" />
     <ClInclude Include="utils\Size.h" />

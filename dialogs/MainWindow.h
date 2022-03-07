@@ -3,7 +3,8 @@
 #include <JuceHeader.h>
 #include "widgets/CentralWidget.h"
 
-class MainWindow : public juce::DocumentWindow
+class MainWindow final :
+    public juce::DocumentWindow
 {
 public:
     MainWindow(juce::String name);

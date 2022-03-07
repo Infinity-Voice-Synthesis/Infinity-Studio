@@ -2,8 +2,9 @@
 #include <JuceHeader.h>
 #include "MenuBar.h"
 #include "utils/Device.h"
+#include "ToolBar.h"
 
-class CentralWidget :
+class CentralWidget final :
     public juce::Component
 {
 public:
@@ -12,10 +13,10 @@ public:
     void init();
 
     void resized()override;
-    void paint(juce::Graphics& g)override;
 
 private:
     std::unique_ptr<MenuBar> menuBar;
+    std::unique_ptr<ToolBar> toolBar;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CentralWidget)
 };

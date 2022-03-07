@@ -51,16 +51,16 @@ void Config::refreshConfigs()
 void Config::refreshTranslates()
 {
 	const juce::String& translatePath = Config::_config->getTranslatePath();
-	const juce::String& lanName = Config::cf("language");
+	const juce::String& lanName = Config::cf("language").toString();
 	const juce::String translateFile = translatePath + lanName + ".json";
 
 	juce::File file(translateFile);
 	*(Config::_config->translates) = juce::JSON::parse(file);
 }
 
-juce::String Config::cf(juce::String&& key)
+juce::var Config::cf(juce::String&& key)
 {
-	return Config::get()[key.toStdString().c_str()].toString();
+	return Config::get()[key.toStdString().c_str()];
 }
 
 juce::String Config::tr(juce::String&& s)
@@ -68,9 +68,9 @@ juce::String Config::tr(juce::String&& s)
 	return Config::getTrans()[s.toStdString().c_str()].toString();
 }
 
-juce::String Config::tm(juce::String&& obj, juce::String&& key)
+juce::var Config::tm(juce::String&& obj, juce::String&& key)
 {
-	return Config::getTheme()[obj.toStdString().c_str()][key.toStdString().c_str()].toString();
+	return Config::getTheme()[obj.toStdString().c_str()][key.toStdString().c_str()];
 }
 
 juce::String Config::ts(juce::String&& obj, juce::String&& key)
@@ -167,7 +167,7 @@ juce::String Config::getThemeFilePath()
 {
 	return juce::String(
 		this->getThemePath() +
-		Config::cf("theme") +
+		Config::cf("theme").toString() +
 		"/"
 	);
 }

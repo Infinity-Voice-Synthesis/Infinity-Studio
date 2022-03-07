@@ -12,7 +12,7 @@ protected:
     const std::vector<Item> getItemList() const override
     {
         return {
-            {Menu::Item::Type::Normal,"MM_Play_or_Stop",true,false,""},
+            {Menu::Item::Type::Checkable,"MM_Play_or_Stop",true,false,""},
             {Menu::Item::Type::Separator,"",true,false,""},
             {Menu::Item::Type::Checkable,"MM_Loop",true,false,""},
             {Menu::Item::Type::Checkable,"MM_Back_on_Stop",true,false,""},

@@ -14,9 +14,9 @@ public:
 	static void init(const juce::String& path, const juce::String& branch, const juce::String& package);
 	static void destory();
 
-	static juce::String cf(juce::String&& key);
+	static juce::var cf(juce::String&& key);
 	static juce::String tr(juce::String&& s);
-	static juce::String tm(juce::String&& obj, juce::String&& key);
+	static juce::var tm(juce::String&& obj, juce::String&& key);
 	static juce::String ts(juce::String&& obj, juce::String&& key);
 	static juce::String tsFull(juce::String&& obj, juce::String&& key);
 

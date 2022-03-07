@@ -3,7 +3,7 @@
 #include "utils/Config.h"
 #include "menus/utils/MenuManager.h"
 
-class MenuBar :
+class MenuBar final :
     public juce::MenuBarComponent,
     private juce::MenuBarModel
 {
