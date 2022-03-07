@@ -158,6 +158,7 @@
     <ClCompile Include="menus\utils\MenuStateMachine.cpp" />
     <ClCompile Include="widgets\ToolBar.cpp" />
     <ClCompile Include="uiModels\ToolBarFactory.cpp" />
+    <ClCompile Include="uiModels\MenuBarModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JuceLibraryCode\JuceHeader.h" />
@@ -346,6 +347,7 @@
     <ClInclude Include="menus\MiscMenu.h" />
     <ClInclude Include="widgets\ToolBar.h" />
     <ClInclude Include="uiModels\ToolBarFactory.h" />
+    <ClInclude Include="uiModels\MenuBarModel.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc">

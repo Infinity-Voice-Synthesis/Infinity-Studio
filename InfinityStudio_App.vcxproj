@@ -140,6 +140,7 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="uiModels\MenuBarModel.cpp" />
     <ClCompile Include="menus\utils\MenuStateMachine.cpp" />
     <ClCompile Include="menus\utils\MenuManager.cpp" />
     <ClCompile Include="menus\utils\Menu.cpp" />
@@ -291,6 +292,7 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="uiModels\MenuBarModel.h" />
     <ClInclude Include="menus\ConfigMenu.h" />
     <ClInclude Include="menus\AutomaticMenu.h" />
     <ClInclude Include="menus\EditMenu.h" />

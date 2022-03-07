@@ -1,35 +1,18 @@
 #pragma once
 #include <JuceHeader.h>
-#include "utils/Config.h"
-#include "menus/utils/MenuManager.h"
+#include "uiModels/MenuBarModel.h"
 
 class MenuBar final :
-    public juce::MenuBarComponent,
-    private juce::MenuBarModel
+    public juce::MenuBarComponent
 {
 public:
     MenuBar();
     ~MenuBar();
 
     void init();
+
 private:
-    juce::StringArray getMenuBarNames()override;
-    juce::PopupMenu getMenuForIndex(int topLevelMenuIndex, const juce::String& menuName)override;
-    void menuItemSelected(int menuItemID, int topLevelMenuIndex)override;
-
-    juce::StringArray menuBarNames;
-
-    juce::StringArray menuBarItemId = {
-        "MMB_File",
-        "MMB_Edit",
-        "MMB_View",
-        "MMB_Modify",
-        "MMB_Project",
-        "MMB_Transport",
-        "MMB_Automatic",
-        "MMB_Config",
-        "MMB_Misc"
-    };
+    std::unique_ptr<MenuBarModel> menuBarModel;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MenuBar)
 };

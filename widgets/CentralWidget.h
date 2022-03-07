@@ -2,6 +2,7 @@
 #include <JuceHeader.h>
 #include "MenuBar.h"
 #include "utils/Device.h"
+#include "utils/Config.h"
 #include "ToolBar.h"
 
 class CentralWidget final :
