@@ -58,27 +58,27 @@ void Config::refreshTranslates()
 	*(Config::_config->translates) = juce::JSON::parse(file);
 }
 
-juce::var Config::cf(juce::String&& key)
+juce::var Config::cf(const juce::String& key)
 {
 	return Config::get()[key.toStdString().c_str()];
 }
 
-juce::String Config::tr(juce::String&& s)
+juce::String Config::tr(const juce::String& s)
 {
 	return Config::getTrans()[s.toStdString().c_str()].toString();
 }
 
-juce::var Config::tm(juce::String&& obj, juce::String&& key)
+juce::var Config::tm(const juce::String& obj, const juce::String& key)
 {
 	return Config::getTheme()[obj.toStdString().c_str()][key.toStdString().c_str()];
 }
 
-juce::String Config::ts(juce::String&& obj, juce::String&& key)
+juce::String Config::ts(const juce::String& obj, const juce::String& key)
 {
 	return Config::getThemeSrc()[obj.toStdString().c_str()][key.toStdString().c_str()].toString();
 }
 
-juce::String Config::tsFull(juce::String&& obj, juce::String&& key)
+juce::String Config::tsFull(const juce::String& obj, const juce::String& key)
 {
 	return juce::String(
 		Config::_config->getThemeSourcePath() +

@@ -20,6 +20,9 @@ public:
 	static juce::PopupMenu get(juce::String id);
 
 	static void actived(juce::String id);
+	static bool isActived(juce::String id);
+
+	static void setActiveCallBack(std::function<void(const juce::String&, bool)> activeCallBack);
 
 private:
 	juce::HashMap<juce::String, std::shared_ptr<Menu>> list;

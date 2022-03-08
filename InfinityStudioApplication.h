@@ -4,6 +4,7 @@
 #include "dialogs/MainWindow.h"
 #include "google/protobuf/api.pb.h"
 #include "utils/Config.h"
+#include "utils/Source.h"
 #include "menus/utils/MenuManager.h"
 
 class InfinityStudioApplication final :
@@ -28,6 +29,8 @@ public:
 
         this->loadFont(Config::tsFull("main", "font"));//载入字体
 
+        Source::init();//初始化静态资源管理器
+
         MenuManager::init();//初始化弹出菜单
 
         this->mainWindow = std::make_unique<MainWindow>(getApplicationName());
@@ -44,6 +47,7 @@ public:
     {
         google::protobuf::ShutdownProtobufLibrary();
         MenuManager::destory();
+        Source::destory();
         Config::destory();
         this->quit();
     }

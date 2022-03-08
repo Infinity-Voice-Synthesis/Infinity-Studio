@@ -59,7 +59,7 @@ juce::PopupMenu MenuManager::DFS(juce::String id)
 		case Menu::Item::Type::Normal:
 		{
 			pMenu.addItem(
-				Config::tr(std::move(item.id)),
+				Config::tr(item.id),
 				item.enable,
 				false,
 				[item] {MenuManager::actived(item.id); }
@@ -69,7 +69,7 @@ juce::PopupMenu MenuManager::DFS(juce::String id)
 		case Menu::Item::Type::Checkable:
 		{
 			pMenu.addItem(
-				Config::tr(std::move(item.id)),
+				Config::tr(item.id),
 				item.enable,
 				item.checked,
 				[item] {MenuManager::actived(item.id); }
@@ -79,7 +79,7 @@ juce::PopupMenu MenuManager::DFS(juce::String id)
 		case Menu::Item::Type::SingleSelectable:
 		{
 			pMenu.addItem(
-				Config::tr(std::move(item.id)),
+				Config::tr(item.id),
 				item.enable,
 				item.checked,
 				[item] {MenuManager::actived(item.id); }
@@ -90,7 +90,7 @@ juce::PopupMenu MenuManager::DFS(juce::String id)
 		{
 			if (!MenuManager::_menuManager->list.contains(item.id)) {
 				pMenu.addItem(
-					Config::tr(std::move(item.id)),
+					Config::tr(item.id),
 					item.enable,
 					false,
 					[] {}
@@ -98,7 +98,7 @@ juce::PopupMenu MenuManager::DFS(juce::String id)
 				break;
 			}
 			pMenu.addSubMenu(
-				Config::tr(std::move(item.id)),
+				Config::tr(item.id),
 				MenuManager::DFS(item.id),
 				item.enable
 			);
@@ -111,7 +111,7 @@ juce::PopupMenu MenuManager::DFS(juce::String id)
 		}
 		case Menu::Item::Type::Head:
 		{
-			pMenu.addSectionHeader(Config::tr(std::move(item.id)));
+			pMenu.addSectionHeader(Config::tr(item.id));
 			break;
 		}
 		}
@@ -122,4 +122,14 @@ juce::PopupMenu MenuManager::DFS(juce::String id)
 void MenuManager::actived(juce::String id)
 {
 	MenuManager::_menuStateMachine->actived(id);
+}
+
+bool MenuManager::isActived(juce::String id)
+{
+	return MenuManager::_menuStateMachine->isActived(id);
+}
+
+void MenuManager::setActiveCallBack(std::function<void(const juce::String&, bool)> activeCallBack)
+{
+	MenuManager::_menuStateMachine->setActiveCallBack(activeCallBack);
 }

@@ -50,6 +50,7 @@ void MenuStateMachine::actived(juce::String id)
 	case Menu::Item::Type::Checkable:
 	{
 		_value.first->checked = !_value.first->checked;
+		this->activeCallBack(_value.first->id, _value.first->checked);
 		_value.second(_value.first->checked);
 		break;
 	}
@@ -66,11 +67,13 @@ void MenuStateMachine::actived(juce::String id)
 						break;
 					}
 					pair.first->checked = true;
+					this->activeCallBack(pair.first->id, pair.first->checked);
 					trueFunc = pair.second;
 				}
 				else {
 					if (pair.first->checked) {
 						pair.first->checked = false;
+						this->activeCallBack(pair.first->id, pair.first->checked);
 						falseFunc = pair.second;
 					}
 				}
@@ -88,4 +91,18 @@ void MenuStateMachine::actived(juce::String id)
 		break;
 	}
 	}
+}
+
+bool MenuStateMachine::isActived(juce::String id)
+{
+	if (!this->list.contains(id)) {
+		return false;
+	}
+	std::pair<Menu::Item*, std::function<void(bool)>>& _value = this->list.getReference(id);
+	return _value.first->checked;
+}
+
+void MenuStateMachine::setActiveCallBack(std::function<void(const juce::String&, bool)> activeCallBack)
+{
+	this->activeCallBack = activeCallBack;
 }

@@ -14,11 +14,11 @@ public:
 	static void init(const juce::String& path, const juce::String& branch, const juce::String& package);
 	static void destory();
 
-	static juce::var cf(juce::String&& key);
-	static juce::String tr(juce::String&& s);
-	static juce::var tm(juce::String&& obj, juce::String&& key);
-	static juce::String ts(juce::String&& obj, juce::String&& key);
-	static juce::String tsFull(juce::String&& obj, juce::String&& key);
+	static juce::var cf(const juce::String& key);
+	static juce::String tr(const juce::String& s);
+	static juce::var tm(const juce::String& obj, const juce::String& key);
+	static juce::String ts(const juce::String& obj, const juce::String& key);
+	static juce::String tsFull(const juce::String& obj, const juce::String& key);
 
 	static juce::var& get();
 	static juce::var& getTrans();
