@@ -11,11 +11,11 @@ class InfinityStudioApplication final :
     public juce::JUCEApplication
 {
 public:
-    InfinityStudioApplication() {}
+    InfinityStudioApplication() :JUCEApplication() {};
 
-    const juce::String getApplicationName() override { return ProjectInfo::projectName; }
-    const juce::String getApplicationVersion() override { return ProjectInfo::versionString; }
-    bool moreThanOneInstanceAllowed() override { return false; }
+    const juce::String getApplicationName() override { return ProjectInfo::projectName; };
+    const juce::String getApplicationVersion() override { return ProjectInfo::versionString; };
+    bool moreThanOneInstanceAllowed() override { return false; };
 
     void initialise(const juce::String& commandLine) override
     {
@@ -36,12 +36,12 @@ public:
         this->mainWindow = std::make_unique<MainWindow>(getApplicationName());
         this->mainWindow->init();
         this->mainWindow->setVisible(true);
-    }
+    };
 
     void shutdown() override
     {
         this->mainWindow = nullptr;
-    }
+    };
 
     void systemRequestedQuit() override
     {
@@ -50,11 +50,11 @@ public:
         Source::destory();
         Config::destory();
         this->quit();
-    }
+    };
 
     void anotherInstanceStarted(const juce::String& commandLine) override
     {
-    }
+    };
 
 private:
     std::unique_ptr<MainWindow> mainWindow;
@@ -75,7 +75,7 @@ private:
 
         juce::Typeface::Ptr&& typeface = juce::Typeface::createSystemTypefaceFor(fontData.get(), fileSize);
         juce::LookAndFeel::getDefaultLookAndFeel().setDefaultSansSerifTypeface(typeface);
-    }
+    };
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(InfinityStudioApplication)
 };

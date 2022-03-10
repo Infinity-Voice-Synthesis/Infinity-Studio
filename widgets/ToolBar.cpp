@@ -1,7 +1,8 @@
 #include "ToolBar.h"
 #include "menus/utils/MenuManager.h"
 
-ToolBar::ToolBar()
+ToolBar::ToolBar() :
+	Toolbar()
 {
 	this->toolBarFactory = std::make_unique<ToolBarFactory>();
 }

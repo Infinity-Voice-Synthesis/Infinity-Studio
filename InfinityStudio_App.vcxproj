@@ -140,6 +140,8 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="uiModels\StatusBarFactory.cpp" />
+    <ClCompile Include="widgets\StatusBar.cpp" />
     <ClCompile Include="utils\Source.cpp" />
     <ClCompile Include="uiModels\MenuBarModel.cpp" />
     <ClCompile Include="menus\utils\MenuStateMachine.cpp" />
@@ -293,6 +295,8 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="uiModels\StatusBarFactory.h" />
+    <ClInclude Include="widgets\StatusBar.h" />
     <ClInclude Include="utils\Source.h" />
     <ClInclude Include="uiModels\MenuBarModel.h" />
     <ClInclude Include="menus\ConfigMenu.h" />

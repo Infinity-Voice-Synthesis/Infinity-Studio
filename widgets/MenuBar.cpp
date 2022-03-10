@@ -1,6 +1,7 @@
 #include "MenuBar.h"
 
-MenuBar::MenuBar()
+MenuBar::MenuBar() :
+	MenuBarComponent()
 {
 	this->menuBarModel = std::make_unique<MenuBarModel>();
 }

@@ -65,7 +65,14 @@ juce::var Config::cf(const juce::String& key)
 
 juce::String Config::tr(const juce::String& s)
 {
-	return Config::getTrans()[s.toStdString().c_str()].toString();
+	if (s.isEmpty()) {
+		return s;
+	}
+	juce::String&& str = Config::getTrans()[s.toStdString().c_str()].toString();
+	if (str.isEmpty()) {
+		return s;
+	}
+	return str;
 }
 
 juce::var Config::tm(const juce::String& obj, const juce::String& key)
@@ -82,7 +89,7 @@ juce::String Config::tsFull(const juce::String& obj, const juce::String& key)
 {
 	return juce::String(
 		Config::_config->getThemeSourcePath() +
-		Config::ts(std::move(obj), std::move(key))
+		Config::ts(obj, key)
 	);
 }
 
