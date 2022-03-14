@@ -57,24 +57,24 @@ bool Source::get(const juce::String& path, const Item::Type& type, void*& ptr, s
 	return true;
 }
 
-const juce::DrawableImage Source::getImage(const juce::String& path)
+std::unique_ptr<juce::Drawable> Source::getImage(const juce::String& path)
 {
 	void* ptr = nullptr;
 	size_t size = 0;
 	if (!Source::get(path, Item::Type::Image, ptr, size)) {
-		return juce::DrawableImage();
+		return std::make_unique<juce::DrawableImage>();
 	}
 
-	return juce::DrawableImage(juce::ImageFileFormat::loadFrom(ptr, size));
+	return juce::Drawable::createFromImageData(ptr, size);
 }
 
-std::unique_ptr<juce::DrawableImage> Source::makeImage(const juce::String& path)
+std::unique_ptr<juce::Drawable> Source::makeImage(const juce::String& path)
 {
 	void* ptr = nullptr;
 	size_t size = 0;
 	if (!Source::get(path, Item::Type::Image, ptr, size)) {
-		return std::move(std::make_unique<juce::DrawableImage>());
+		return std::make_unique<juce::DrawableImage>();
 	}
 
-	return std::move(std::make_unique<juce::DrawableImage>(juce::ImageFileFormat::loadFrom(ptr, size)));
+	return juce::Drawable::createFromImageData(ptr, size);
 }
