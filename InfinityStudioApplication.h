@@ -6,6 +6,8 @@
 #include "utils/Config.h"
 #include "utils/Source.h"
 #include "menus/utils/MenuManager.h"
+#include "utils/TextStateGetter.h"
+#include "utils/ImageStateGetter.h"
 
 class InfinityStudioApplication final :
     public juce::JUCEApplication
@@ -31,6 +33,9 @@ public:
 
         Source::init();//初始化静态资源管理器
 
+        ImageStateGetter::init();//初始化图标状态管理器
+        TextStateGetter::init();//初始化字符状态管理器
+
         MenuManager::init();//初始化弹出菜单
 
         this->mainWindow = std::make_unique<MainWindow>(getApplicationName());
@@ -47,6 +52,8 @@ public:
     {
         google::protobuf::ShutdownProtobufLibrary();
         MenuManager::destory();
+        ImageStateGetter::destory();
+        TextStateGetter::destory();
         Source::destory();
         Config::destory();
         this->quit();

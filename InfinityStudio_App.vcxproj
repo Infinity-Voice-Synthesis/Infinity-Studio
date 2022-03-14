@@ -295,7 +295,11 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="utils\ImageStateGetter.h" />
+    <ClInclude Include="utils\KeyStateGetter.h" />
+    <ClInclude Include="utils\StateGetter.h" />
     <ClInclude Include="uiModels\StatusBarFactory.h" />
+    <ClInclude Include="utils\TextStateGetter.h" />
     <ClInclude Include="widgets\StatusBar.h" />
     <ClInclude Include="utils\Source.h" />
     <ClInclude Include="uiModels\MenuBarModel.h" />
