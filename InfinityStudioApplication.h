@@ -7,7 +7,7 @@
 #include "utils/Source.h"
 #include "menus/utils/MenuManager.h"
 #include "utils/TextStateGetter.h"
-#include "utils/ImageStateGetter.h"
+#include "utils/Utils.h"
 
 class InfinityStudioApplication final :
     public juce::JUCEApplication
@@ -33,7 +33,6 @@ public:
 
         Source::init();//初始化静态资源管理器
 
-        ImageStateGetter::init();//初始化图标状态管理器
         TextStateGetter::init();//初始化字符状态管理器
 
         MenuManager::init();//初始化弹出菜单
@@ -52,10 +51,10 @@ public:
     {
         google::protobuf::ShutdownProtobufLibrary();
         MenuManager::destory();
-        ImageStateGetter::destory();
         TextStateGetter::destory();
         Source::destory();
         Config::destory();
+        Utils::destory();
         this->quit();
     };
 
@@ -80,8 +79,8 @@ private:
         std::unique_ptr<char[]> fontData(new char[fileSize]);
         stream.read(fontData.get(), fileSize);
 
-        juce::Typeface::Ptr&& typeface = juce::Typeface::createSystemTypefaceFor(fontData.get(), fileSize);
-        juce::LookAndFeel::getDefaultLookAndFeel().setDefaultSansSerifTypeface(typeface);
+        Utils::setTypeFace(juce::Typeface::createSystemTypefaceFor(fontData.get(), fileSize));
+        juce::LookAndFeel::getDefaultLookAndFeel().setDefaultSansSerifTypeface(Utils::getTypeFace());
     };
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(InfinityStudioApplication)

@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include "widgets/StatusBarButton.h"
 
 class StatusBarFactory final :
     public juce::ToolbarItemFactory
@@ -12,7 +13,6 @@ public:
     void getDefaultItemSet(juce::Array<int>& ids)override;
     juce::ToolbarItemComponent* createItem(int itemId)override;
 
-private:
     struct Item {
         enum class Type {
             Normal = 0,
@@ -20,30 +20,33 @@ private:
             Spacer = 2,
             FlexibleSpacer = 3
         };
-        enum class ShowType {
-            Hide = 0,
-            Icon = 1 << 0,
-            Text = 1 << 1,
-            IconAndText = 1 << 0 | 1 << 1
-        };
+
         Type type = Type::Normal;
         juce::String id;
-        ShowType showType = ShowType::IconAndText;
-        std::function<void(const juce::String&)> activeFunc = [](const juce::String& id) {};
+        StatusBarButton::ShowType showType = StatusBarButton::ShowType::IconAndText;
 
-        static std::function<juce::String(const juce::String&)> textFunc;
-        static std::function<std::unique_ptr<juce::DrawableImage>(const juce::String&)> iconFunc;
+        using ItemActiveFunction = std::function<void(const juce::String&)>;
+        ItemActiveFunction activeFunc = [](const juce::String& id) {};
 
-        static std::function<bool(const ShowType&, const ShowType&)> stateCheckFunc;
+        using ItemTextFunction = std::function<juce::String(const juce::String&)>;
+        static ItemTextFunction textFunc;
     };
+private:
 
-    std::vector<Item> toolBarItems = {
-        {.type = Item::Type::Normal,.id = "SB_Console",.showType = Item::ShowType::Icon},
-        {.type = Item::Type::Normal,.id = "SB_VirtualMachineState",.showType = Item::ShowType::Icon},
+    std::vector<Item> statusBarItems = {
+        {.type = Item::Type::Normal,.id = "SB_Console",.showType = StatusBarButton::ShowType::Icon},
+        {.type = Item::Type::Normal,.id = "SB_VirtualMachineState",.showType = StatusBarButton::ShowType::Text},
+        {.type = Item::Type::Normal,.id = "SB_VirtualMachineError",.showType = StatusBarButton::ShowType::IconAndText},
         {.type = Item::Type::FlexibleSpacer},
-        {.type = Item::Type::Normal,.id = "SB_Pattern",.showType = Item::ShowType::Text}
+        {.type = Item::Type::Normal,.id = "SB_Pattern",.showType = StatusBarButton::ShowType::Text}
     };
 
+    const std::unique_ptr<Item> _empty = std::make_unique<Item>();
+
+public:
+    std::pair<int, const Item&> findItem(const juce::String& id);
+
+private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatusBarFactory)
 };
 

@@ -1,18 +1,10 @@
 #include "StatusBarFactory.h"
 #include "utils/Config.h"
 #include "utils/Source.h"
+#include "utils/TextStateGetter.h"
 
-std::function<bool(const StatusBarFactory::Item::ShowType&, const StatusBarFactory::Item::ShowType&)> StatusBarFactory::Item::stateCheckFunc
-= [](const StatusBarFactory::Item::ShowType& arg1, const StatusBarFactory::Item::ShowType& arg2) ->bool
-{
-	return static_cast<uint64_t>(arg1) & static_cast<uint64_t>(arg2);
-};
-
-std::function<juce::String(const juce::String&)> StatusBarFactory::Item::textFunc
-= [](const juce::String& id)->juce::String {return juce::String(); };
-
-std::function<std::unique_ptr<juce::DrawableImage>(const juce::String&)> StatusBarFactory::Item::iconFunc
-= [](const juce::String& id)->std::unique_ptr<juce::DrawableImage> {return std::make_unique<juce::DrawableImage>(); };
+StatusBarFactory::Item::ItemTextFunction StatusBarFactory::Item::textFunc
+= [](const juce::String& id)->juce::String {return L"²âÊÔ×Ö·û"/*TextStateGetter::get(id)*/; };
 
 StatusBarFactory::StatusBarFactory() :
 	ToolbarItemFactory()
@@ -27,8 +19,8 @@ StatusBarFactory::~StatusBarFactory()
 
 void StatusBarFactory::getAllToolbarItemIds(juce::Array<int>& ids)
 {
-	for (int i = 0; i < this->toolBarItems.size(); i++) {
-		Item& item = this->toolBarItems[i];
+	for (int i = 0; i < this->statusBarItems.size(); i++) {
+		Item& item = this->statusBarItems[i];
 		switch (item.type)
 		{
 		case Item::Type::Normal:
@@ -62,31 +54,32 @@ void StatusBarFactory::getDefaultItemSet(juce::Array<int>& ids)
 
 juce::ToolbarItemComponent* StatusBarFactory::createItem(int itemId)
 {
-	Item& item = this->toolBarItems[static_cast<long long>(itemId) - 1];
-	juce::ToolbarButton* button = new juce::ToolbarButton(
+	Item& item = this->statusBarItems[static_cast<long long>(itemId) - 1];
+	StatusBarButton* button = new StatusBarButton(
 		itemId,
+		item.showType,
 		(
-			Item::stateCheckFunc(item.showType, Item::ShowType::Text)
+			StatusBarButton::stateCheckFunc(item.showType, StatusBarButton::ShowType::Text)
 			? Config::tr(StatusBarFactory::Item::textFunc(item.id))
 			: ""
 			),
 		(
-			Item::stateCheckFunc(item.showType, Item::ShowType::Icon)
-			? std::move(StatusBarFactory::Item::iconFunc(item.id))
+			StatusBarButton::stateCheckFunc(item.showType, StatusBarButton::ShowType::Icon)
+			? std::move(Source::makeImage(Config::tsFull(item.id, "icon-normal")))
 			: std::make_unique<juce::DrawableImage>()
 			),
 		(
-			Item::stateCheckFunc(item.showType, Item::ShowType::Icon)
-			? std::move(StatusBarFactory::Item::iconFunc(item.id))
+			StatusBarButton::stateCheckFunc(item.showType, StatusBarButton::ShowType::Icon)
+			? std::move(Source::makeImage(Config::tsFull(item.id, "icon-normal")))
 			: std::make_unique<juce::DrawableImage>()
 			)
 	);
 	button->setToggleable(false);
 
 	bool leftConnect = (((static_cast<long long>(itemId) - 1) - 1) >= 0) &&
-		(this->toolBarItems[static_cast<long long>(itemId) - 1 - 1].type == Item::Type::Normal);
-	bool rightConnect = (((static_cast<long long>(itemId) - 1) + 1) < static_cast<long long>(this->toolBarItems.size())) &&
-		(this->toolBarItems[static_cast<long long>(itemId) - 1 + 1].type == Item::Type::Normal);
+		(this->statusBarItems[static_cast<long long>(itemId) - 1 - 1].type == Item::Type::Normal);
+	bool rightConnect = (((static_cast<long long>(itemId) - 1) + 1) < static_cast<long long>(this->statusBarItems.size())) &&
+		(this->statusBarItems[static_cast<long long>(itemId) - 1 + 1].type == Item::Type::Normal);
 	button->setConnectedEdges(
 		(leftConnect ? juce::Button::ConnectedEdgeFlags::ConnectedOnLeft : 0) |
 		(rightConnect ? juce::Button::ConnectedEdgeFlags::ConnectedOnRight : 0)
@@ -94,4 +87,15 @@ juce::ToolbarItemComponent* StatusBarFactory::createItem(int itemId)
 
 	button->onClick = [item] {item.activeFunc(item.id); };
 	return button;
+}
+
+std::pair<int, const StatusBarFactory::Item&> StatusBarFactory::findItem(const juce::String& id)
+{
+	for (int i = 0; i < this->statusBarItems.size(); i++) {
+		Item& item = this->statusBarItems[i];
+		if (item.id == id) {
+			return std::make_pair(i, item);
+		}
+	}
+	return std::make_pair(-1, *(this->_empty));
 }

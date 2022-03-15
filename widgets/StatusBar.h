@@ -11,6 +11,8 @@ public:
 
     void init();
 
+    void refreshItemText(const juce::String& id);
+
 private:
     std::unique_ptr<StatusBarFactory> statusBarFactory;
 
