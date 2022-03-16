@@ -297,6 +297,7 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="utils\ImageStateGetter.h" />
     <ClInclude Include="utils\Utils.h" />
     <ClInclude Include="widgets\StatusBarButton.h" />
     <ClInclude Include="utils\KeyStateGetter.h" />

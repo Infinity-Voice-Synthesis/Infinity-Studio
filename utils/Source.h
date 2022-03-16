@@ -27,8 +27,8 @@ public:
 
 	static bool get(const juce::String& path, const Item::Type& type, void*& ptr, size_t& size);
 
-	static std::unique_ptr<juce::Drawable> getImage(const juce::String& path);
-	static std::unique_ptr<juce::Drawable> makeImage(const juce::String& path);
+	static juce::DrawableImage* getImage(const juce::String& path);
+	static juce::DrawableImage* makeImage(const juce::String& path);
 
 private:
 	juce::HashMap<juce::String, Item> list;

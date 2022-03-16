@@ -122,3 +122,17 @@ void StatusBarButton::buttonStateChanged()
 {
     setCurrentImage(getImageToUse());
 }
+
+void StatusBarButton::setButtonNormalIcon(std::unique_ptr<juce::Drawable> normalIm)
+{
+    this->normalImage = nullptr;
+    this->normalImage = std::move(normalIm);
+    setCurrentImage(getImageToUse());
+}
+
+void StatusBarButton::setButtonToggledIcon(std::unique_ptr<juce::Drawable> toggledIm)
+{
+    this->toggledOnImage = nullptr;
+    this->toggledOnImage = std::move(toggledIm);
+    setCurrentImage(getImageToUse());
+}

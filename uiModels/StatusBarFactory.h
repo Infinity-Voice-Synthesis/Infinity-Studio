@@ -30,6 +30,8 @@ public:
 
         using ItemTextFunction = std::function<juce::String(const juce::String&)>;
         static ItemTextFunction textFunc;
+        using ItemIconFunction = std::function<std::unique_ptr<juce::Drawable>(const juce::String&)>;
+        static ItemIconFunction iconFunc;
     };
 private:
 

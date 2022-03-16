@@ -54,8 +54,8 @@ juce::ToolbarItemComponent* ToolBarFactory::createItem(int itemId)
 	juce::ToolbarButton* button = new juce::ToolbarButton(
 		itemId,
 		Config::tr(item.id),
-		std::move(Source::makeImage(Config::tsFull(item.id, "icon-normal"))),
-		std::move(Source::makeImage(Config::tsFull(item.id, "icon-checked")))
+		std::move(std::unique_ptr<juce::Drawable>(Source::makeImage(Config::tsFull(item.id, "icon-normal")))),
+		std::move(std::unique_ptr<juce::Drawable>(Source::makeImage(Config::tsFull(item.id, "icon-checked"))))
 	);
 	button->setToggleable(true);
 	button->setToggleState(MenuManager::isActived(item.id), juce::NotificationType::dontSendNotification);

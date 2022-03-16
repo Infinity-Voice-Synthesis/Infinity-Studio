@@ -28,6 +28,9 @@ public:
     void resized() override;
     void enablementChanged() override;
 
+    void setButtonNormalIcon(std::unique_ptr<juce::Drawable> normalIm);
+    void setButtonToggledIcon(std::unique_ptr<juce::Drawable> toggledIm);
+
 private:
     const ShowType showType = ShowType::IconAndText;
     std::unique_ptr<juce::Drawable> normalImage, toggledOnImage;

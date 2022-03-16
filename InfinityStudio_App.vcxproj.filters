@@ -361,6 +361,7 @@
     <ClInclude Include="utils\KeyStateGetter.h" />
     <ClInclude Include="widgets\StatusBarButton.h" />
     <ClInclude Include="utils\Utils.h" />
+    <ClInclude Include="utils\ImageStateGetter.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc">
