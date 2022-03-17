@@ -1,8 +1,7 @@
 #include "StatusBar.h"
-#include "utils/TextStateGetter.h"
-#include "utils/ImageStateGetter.h"
 #include "utils/Source.h"
 #include "utils/Config.h"
+#include "utils/Utils.h"
 
 StatusBar::StatusBar() :
 	Toolbar()
@@ -17,11 +16,11 @@ StatusBar::~StatusBar()
 
 void StatusBar::init()
 {
-	TextStateGetter::insert("SB_VirtualMachineState", [](const juce::String& id)->juce::String {return "Ready"; });
-	TextStateGetter::insert("SB_VirtualMachineError", [](const juce::String& id)->juce::String {return "No Errors"; });
-	TextStateGetter::insert("SB_Pattern", [](const juce::String& id)->juce::String {return "No Pattern"; });
-	ImageStateGetter::insert("SB_Console", [](const juce::String& id)->juce::DrawableImage* {return Source::makeImage(Config::tsFull("SB_Console", "icon-normal")); });
-	ImageStateGetter::insert("SB_VirtualMachineError", [](const juce::String& id)->juce::DrawableImage* {return Source::makeImage(Config::tsFull("SB_VirtualMachineError", "icon-normal")); });
+	Utils::getTSG().insert("SB_VirtualMachineState", [](const juce::String& id)->juce::String {return "Ready"; });
+	Utils::getTSG().insert("SB_VirtualMachineError", [](const juce::String& id)->juce::String {return "No Errors"; });
+	Utils::getTSG().insert("SB_Pattern", [](const juce::String& id)->juce::String {return "No Pattern"; });
+	Utils::getISG().insert("SB_Console", [](const juce::String& id)->juce::DrawableImage* {return Source::makeImage(Config::tsFull("SB_Console", "icon-normal")); });
+	Utils::getISG().insert("SB_VirtualMachineError", [](const juce::String& id)->juce::DrawableImage* {return Source::makeImage(Config::tsFull("SB_VirtualMachineError", "icon-normal")); });
 
 	this->setVertical(false);
 	this->setStyle(juce::Toolbar::ToolbarItemStyle::iconsOnly);

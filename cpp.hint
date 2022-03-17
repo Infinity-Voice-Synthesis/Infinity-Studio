@@ -2,3 +2,6 @@
 // 如函数和宏的名称。
 // 有关详细信息，请参见 https://go.microsoft.com/fwlink/?linkid=865984
 #define JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(className) JUCE_DECLARE_NON_COPYABLE(className) JUCE_LEAK_DETECTOR(className)
+#define JUCE_LEAK_DETECTOR(OwnerClass) public: static void* operator new (size_t sz) { return juce::juceDLL_malloc (sz); } static void* operator new (size_t, void* p) { return p; } static void operator delete (void* p) { juce::juceDLL_free (p); } static void operator delete (void*, void*) {}
+#define JUCE_LEAK_DETECTOR(OwnerClass) friend class juce::LeakedObjectDetector<OwnerClass>; static const char* getLeakedObjectClassName() noexcept { return #OwnerClass; } juce::LeakedObjectDetector<OwnerClass> JUCE_JOIN_MACRO (leakDetector, __LINE__);
+#define JUCE_LEAK_DETECTOR(OwnerClass)

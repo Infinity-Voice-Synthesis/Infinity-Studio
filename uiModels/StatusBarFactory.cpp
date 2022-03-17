@@ -1,13 +1,12 @@
 #include "StatusBarFactory.h"
 #include "utils/Config.h"
 #include "utils/Source.h"
-#include "utils/TextStateGetter.h"
-#include "utils/ImageStateGetter.h"
+#include "utils/Utils.h"
 
 StatusBarFactory::Item::ItemTextFunction StatusBarFactory::Item::textFunc
-= [](const juce::String& id)->juce::String {return TextStateGetter::get(id); };
+= [](const juce::String& id)->juce::String {return Utils::getTSG().get(id); };
 StatusBarFactory::Item::ItemIconFunction StatusBarFactory::Item::iconFunc
-= [](const juce::String& id)->std::unique_ptr<juce::Drawable> {return std::unique_ptr<juce::Drawable>(ImageStateGetter::get(id)); };
+= [](const juce::String& id)->std::unique_ptr<juce::Drawable> {return std::unique_ptr<juce::Drawable>(Utils::getISG().get(id)); };
 
 StatusBarFactory::StatusBarFactory() :
 	ToolbarItemFactory()
@@ -58,11 +57,6 @@ void StatusBarFactory::getDefaultItemSet(juce::Array<int>& ids)
 juce::ToolbarItemComponent* StatusBarFactory::createItem(int itemId)
 {
 	Item& item = this->statusBarItems[static_cast<long long>(itemId) - 1];
-	auto test1 = Config::tr(StatusBarFactory::Item::textFunc(item.id));
-	auto test2 = std::move(StatusBarFactory::Item::iconFunc(item.id));
-	auto& test3 = TextStateGetter::__val();
-	auto test4 = TextStateGetter::__ref(item.id);
-	auto test5 = test4(item.id);
 
 	StatusBarButton* button = new StatusBarButton(
 		itemId,

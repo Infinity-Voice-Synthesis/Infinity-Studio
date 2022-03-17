@@ -1,84 +1,31 @@
 #pragma once
 #include <JuceHeader.h>
 
-template<class Tx,class Ty>
+template<class Tx,class Ty,class F=std::function<Ty(const Tx&)>>
 class StateGetter
 {
-	static std::unique_ptr<StateGetter<Tx, Ty>> _stateGetter;
 public:
-	StateGetter();
-	~StateGetter();
+	StateGetter() {};
+	~StateGetter() {};
 
-	static void init();
-	static void destory();
-
-	static void insert(const Tx& key, std::function<Ty(const Tx&)> Func);
-	static const Ty get(const Tx& key);
-
-	static const StateGetter<Tx, Ty>& __val();
-	static std::function<Ty(const Tx&)> __ref(const juce::String& key);
+	void insert(const Tx& key, F Func)
+	{
+		this->funcList->set(key, Func);
+	};
+	const Ty get(const Tx& key)
+	{
+		if (!this->funcList->contains(key)) {
+			return *(this->_empty);
+		}
+		return (this->funcList->getReference(key))(key);
+	};
 
 private:
-	juce::HashMap<const Tx&, std::function<Ty(const Tx&)>> list;
-	static std::unique_ptr<Ty> _empty;
+	using TMap = juce::HashMap<Tx, F>;
+	std::unique_ptr<TMap> funcList
+		= std::make_unique<TMap>();
+	std::unique_ptr<Ty> _empty
+		= std::make_unique<Ty>();
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StateGetter)
 };
-
-template<class Tx, class Ty>
-std::unique_ptr<StateGetter<Tx, Ty>> StateGetter<Tx, Ty>::_stateGetter = std::make_unique<StateGetter<Tx, Ty>>();
-
-template<class Tx, class Ty>
-std::unique_ptr<Ty> StateGetter<Tx, Ty>::_empty = std::make_unique<Ty>();
-
-template<class Tx, class Ty>
-void StateGetter<Tx, Ty>::init()
-{
-
-}
-
-template<class Tx, class Ty>
-void StateGetter<Tx, Ty>::destory()
-{
-	StateGetter<Tx, Ty>::_empty = nullptr;
-	StateGetter<Tx, Ty>::_stateGetter = nullptr;
-}
-
-template<class Tx, class Ty>
-StateGetter<Tx, Ty>::StateGetter()
-{
-
-}
-
-template<class Tx, class Ty>
-StateGetter<Tx, Ty>::~StateGetter()
-{
-
-}
-
-template<class Tx, class Ty>
-void StateGetter<Tx, Ty>::insert(const Tx& key, std::function<Ty(const Tx&)> Func)
-{
-	StateGetter<Tx, Ty>::_stateGetter->list.set(key, Func);
-}
-
-template<class Tx, class Ty>
-const Ty StateGetter<Tx, Ty>::get(const Tx& key)
-{
-	if (!StateGetter<Tx, Ty>::_stateGetter->list.contains(key)) {
-		return *(StateGetter<Tx, Ty>::_empty);
-	}
-	return StateGetter<Tx, Ty>::_stateGetter->list[key](key);
-}
-
-template<class Tx, class Ty>
-const StateGetter<Tx, Ty>& StateGetter<Tx, Ty>::__val()
-{
-	return *(StateGetter<Tx, Ty>::_stateGetter);
-}
-
-template<class Tx, class Ty>
-std::function<Ty(const Tx&)> StateGetter<Tx, Ty>::__ref(const juce::String& key)
-{
-	return StateGetter<Tx, Ty>::_stateGetter->list[key];
-}

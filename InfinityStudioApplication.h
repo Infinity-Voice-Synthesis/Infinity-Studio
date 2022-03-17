@@ -6,8 +6,6 @@
 #include "utils/Config.h"
 #include "utils/Source.h"
 #include "menus/utils/MenuManager.h"
-#include "utils/TextStateGetter.h"
-#include "utils/ImageStateGetter.h"
 #include "utils/Utils.h"
 
 class InfinityStudioApplication final :
@@ -22,6 +20,8 @@ public:
 
     void initialise(const juce::String& commandLine) override
     {
+        Utils::init();//初始化单例复用类
+
         Config::init(
             juce::String("D:/develop/Infinity/"),
             juce::String("main"),
@@ -33,9 +33,6 @@ public:
         this->loadFont(Config::tsFull("main", "font"));//载入字体
 
         Source::init();//初始化静态资源管理器
-
-        TextStateGetter::init();//初始化字符状态管理器
-        ImageStateGetter::init();//初始化图像状态管理器
 
         MenuManager::init();//初始化弹出菜单
 
@@ -53,8 +50,6 @@ public:
     {
         google::protobuf::ShutdownProtobufLibrary();
         MenuManager::destory();
-        ImageStateGetter::destory();
-        TextStateGetter::destory();
         Source::destory();
         Config::destory();
         Utils::destory();
