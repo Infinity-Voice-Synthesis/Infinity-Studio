@@ -15,6 +15,10 @@ CentralWidget::CentralWidget() :
 	this->statusBar = std::make_unique<StatusBar>();
 	this->addChildComponent(this->statusBar.get());
 	this->statusBar->setVisible(true);
+
+	this->editorWidget = std::make_unique<EditorWidget>();
+	this->addChildComponent(this->editorWidget.get());
+	this->editorWidget->setVisible(true);
 }
 
 void CentralWidget::init()
@@ -22,6 +26,7 @@ void CentralWidget::init()
 	this->menuBar->init();
 	this->toolBar->init();
 	this->statusBar->init();
+	this->editorWidget->init();
 }
 
 void CentralWidget::resized()
@@ -38,6 +43,12 @@ void CentralWidget::resized()
 	this->toolBar->setSize(Size::toolBar_width * screenArea.getWidth() * screenScale, this->getHeight() - this->menuBar->getHeight() - this->statusBar->getHeight());
 	this->toolBar->setTopLeftPosition(
 		(bool)Config::tm("toolBar", "left") ? 0 : this->getWidth() - this->toolBar->getWidth(),
+		this->menuBar->getHeight()
+	);
+
+	this->editorWidget->setSize(this->getWidth() - this->toolBar->getWidth(), this->getHeight() - this->menuBar->getHeight() - this->statusBar->getHeight());
+	this->editorWidget->setTopLeftPosition(
+		(bool)Config::tm("toolBar", "left") ? this->toolBar->getWidth() : 0,
 		this->menuBar->getHeight()
 	);
 }

@@ -140,6 +140,7 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="widgets\EditorWidget.cpp" />
     <ClCompile Include="utils\Utils.cpp" />
     <ClCompile Include="widgets\StatusBarButton.cpp" />
     <ClCompile Include="uiModels\StatusBarFactory.cpp" />
@@ -297,6 +298,7 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="widgets\EditorWidget.h" />
     <ClInclude Include="utils\ImageStateGetter.h" />
     <ClInclude Include="utils\Utils.h" />
     <ClInclude Include="widgets\StatusBarButton.h" />

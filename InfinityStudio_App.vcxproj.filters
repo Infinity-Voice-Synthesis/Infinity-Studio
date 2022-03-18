@@ -164,6 +164,7 @@
     <ClCompile Include="uiModels\StatusBarFactory.cpp" />
     <ClCompile Include="widgets\StatusBarButton.cpp" />
     <ClCompile Include="utils\Utils.cpp" />
+    <ClCompile Include="widgets\EditorWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JuceLibraryCode\JuceHeader.h" />
@@ -362,6 +363,7 @@
     <ClInclude Include="widgets\StatusBarButton.h" />
     <ClInclude Include="utils\Utils.h" />
     <ClInclude Include="utils\ImageStateGetter.h" />
+    <ClInclude Include="widgets\EditorWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc">

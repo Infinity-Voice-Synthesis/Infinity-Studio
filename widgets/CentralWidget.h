@@ -5,6 +5,7 @@
 #include "utils/Config.h"
 #include "ToolBar.h"
 #include "StatusBar.h"
+#include "EditorWidget.h"
 
 class CentralWidget final :
     public juce::Component
@@ -20,6 +21,7 @@ private:
     std::unique_ptr<MenuBar> menuBar;
     std::unique_ptr<ToolBar> toolBar;
     std::unique_ptr<StatusBar> statusBar;
+    std::unique_ptr<EditorWidget> editorWidget;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CentralWidget)
 };
