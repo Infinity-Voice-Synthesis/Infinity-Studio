@@ -140,6 +140,10 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="utils\Size.cpp" />
+    <ClCompile Include="widgets\NoteView.cpp" />
+    <ClCompile Include="widgets\ParamView.cpp" />
+    <ClCompile Include="widgets\TrackView.cpp" />
     <ClCompile Include="widgets\EditorWidget.cpp" />
     <ClCompile Include="utils\Utils.cpp" />
     <ClCompile Include="widgets\StatusBarButton.cpp" />
@@ -298,6 +302,9 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="widgets\NoteView.h" />
+    <ClInclude Include="widgets\ParamView.h" />
+    <ClInclude Include="widgets\TrackView.h" />
     <ClInclude Include="widgets\EditorWidget.h" />
     <ClInclude Include="utils\ImageStateGetter.h" />
     <ClInclude Include="utils\Utils.h" />
