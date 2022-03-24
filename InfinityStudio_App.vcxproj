@@ -140,6 +140,7 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="utils\CallBackManager.cpp" />
     <ClCompile Include="utils\Size.cpp" />
     <ClCompile Include="widgets\NoteView.cpp" />
     <ClCompile Include="widgets\ParamView.cpp" />
@@ -302,6 +303,7 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="utils\CallBackManager.h" />
     <ClInclude Include="widgets\NoteView.h" />
     <ClInclude Include="widgets\ParamView.h" />
     <ClInclude Include="widgets\TrackView.h" />

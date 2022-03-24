@@ -169,6 +169,7 @@
     <ClCompile Include="widgets\NoteView.cpp" />
     <ClCompile Include="widgets\ParamView.cpp" />
     <ClCompile Include="utils\Size.cpp" />
+    <ClCompile Include="utils\CallBackManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JuceLibraryCode\JuceHeader.h" />
@@ -371,6 +372,7 @@
     <ClInclude Include="widgets\TrackView.h" />
     <ClInclude Include="widgets\NoteView.h" />
     <ClInclude Include="widgets\ParamView.h" />
+    <ClInclude Include="utils\CallBackManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc">

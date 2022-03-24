@@ -7,6 +7,7 @@
 #include "utils/Source.h"
 #include "menus/utils/MenuManager.h"
 #include "utils/Utils.h"
+#include "utils/CallBackManager.h"
 
 class InfinityStudioApplication final :
     public juce::JUCEApplication
@@ -36,6 +37,8 @@ public:
 
         MenuManager::init();//初始化弹出菜单
 
+        CallBackManager::init();//初始化回调管理器
+
         this->mainWindow = std::make_unique<MainWindow>(getApplicationName());
         this->mainWindow->init();
         this->mainWindow->setVisible(true);
@@ -48,6 +51,7 @@ public:
 
     void systemRequestedQuit() override
     {
+        CallBackManager::destory();
         google::protobuf::ShutdownProtobufLibrary();
         MenuManager::destory();
         Source::destory();
