@@ -7,6 +7,7 @@ class CallBackManager final
 
 	class CallBackObjectBase
 	{
+		JUCE_LEAK_DETECTOR(CallBackObjectBase)
 	};
 
 	template<typename T>
@@ -29,7 +30,6 @@ class CallBackManager final
 		JUCE_LEAK_DETECTOR(CallBackObject)
 	};
 
-	using _COB = CallBackObjectBase;
 public:
 	CallBackManager();
 	~CallBackManager();
@@ -38,11 +38,11 @@ public:
 	static void destory();
 
 	template<typename T, class F = std::function<T>, class U = CallBackManager::CallBackObject<T>>
-	static void set(const juce::String& key, const F& Func)
+	static void set(const juce::String& key, const F& func)
 	{
 		CallBackManager::_callBackManager->list.set(
 			key,
-			static_cast<_COB>(U(Func))
+			std::make_shared<U>(func)
 		);
 	};
 
@@ -50,11 +50,12 @@ public:
 	static void call(const juce::String& key, A ...args)
 	{
 		if (CallBackManager::_callBackManager->list.contains(key)) {
-			U&& obj = static_cast<U&&>(CallBackManager::_callBackManager->list.getReference(key));
-			std::bind(obj(), args...)();
+			U* obj = reinterpret_cast<U*>(CallBackManager::_callBackManager->list.getReference(key).get());
+			const F& func = (*obj)();
+			func(args...);
 		}
 	};
 private:
-	juce::HashMap<juce::String, _COB> list;
+	juce::HashMap<juce::String, std::shared_ptr<CallBackObjectBase>> list;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CallBackManager)
 };
