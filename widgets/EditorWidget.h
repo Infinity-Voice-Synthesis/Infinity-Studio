@@ -32,9 +32,9 @@ private:
     std::unique_ptr<juce::StretchableLayoutManager> stretchableManager;
     std::unique_ptr<juce::StretchableLayoutResizerBar> stretchableBar0, stretchableBar1;
 
-    const std::vector<int> barId = { 1,3 };
-    const std::vector<int> itemId = { 0,2,4 };
     std::vector<juce::Component*> components;
+
+    void reStre();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EditorWidget)
 };
