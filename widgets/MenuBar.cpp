@@ -20,14 +20,14 @@ void MenuBar::init()
 
 	MenuManager::connect(
 		"MM_Track_View",
-		[](bool actived) {CallBackManager::call<void(bool)>("lambda_EditorWidget_TrackViewActived_bool", std::make_tuple(actived)); }
+		[](bool actived) {CallBackManager::call<void(bool)>("lambda_EditorWidget_TrackViewActived_bool", actived); }
 	);
 	MenuManager::connect(
 		"MM_Note_View",
-		[](bool actived) {CallBackManager::call<void(bool)>("lambda_EditorWidget_NoteViewActived_bool", std::make_tuple(actived)); }
+		[](bool actived) {CallBackManager::call<void(bool)>("lambda_EditorWidget_NoteViewActived_bool", actived); }
 	);
 	MenuManager::connect(
 		"MM_Parameter_View",
-		[](bool actived) {CallBackManager::call<void(bool)>("lambda_EditorWidget_ParameterViewActived_bool", std::make_tuple(actived)); }
+		[](bool actived) {CallBackManager::call<void(bool)>("lambda_EditorWidget_ParameterViewActived_bool", actived); }
 	);
 }
