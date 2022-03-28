@@ -133,3 +133,13 @@ void MenuManager::setActiveCallBack(std::function<void(const juce::String&, bool
 {
 	MenuManager::_menuStateMachine->setActiveCallBack(activeCallBack);
 }
+
+void MenuManager::connect(juce::String id, std::function<void(bool)> Func)
+{
+	MenuManager::_menuStateMachine->connect(id, Func);
+}
+
+void MenuManager::reset(juce::String id)
+{
+	MenuManager::_menuStateMachine->reset(id);
+}

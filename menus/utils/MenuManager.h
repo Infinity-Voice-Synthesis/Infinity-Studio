@@ -24,6 +24,9 @@ public:
 
 	static void setActiveCallBack(std::function<void(const juce::String&, bool)> activeCallBack);
 
+	static void connect(juce::String id, std::function<void(bool)> Func);
+	static void reset(juce::String id);
+
 private:
 	juce::HashMap<juce::String, std::shared_ptr<Menu>> list;
 

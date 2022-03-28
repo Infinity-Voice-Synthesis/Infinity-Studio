@@ -13,6 +13,14 @@ public:
 
     void init();
 
+    enum class ActivedWidget
+    {
+        TrackView = 0,
+        NoteView = 1,
+        ParamView = 2
+    };
+    void active(bool actived, ActivedWidget widget);
+
 protected:
     void resized()override;
 
