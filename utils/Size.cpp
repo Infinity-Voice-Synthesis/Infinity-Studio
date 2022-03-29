@@ -8,3 +8,9 @@ double Size::editorItem_min_height = 0.15;//编辑器面板最小高度
 double Size::editorItem_max_height = 1.0;//编辑器面板最大高度
 double Size::editorItem_prefred_height = 0.5;//编辑器面板默认高度
 double Size::editorSplitor_height = 0.005;//编辑器分割条高度
+
+double Size::editorTrackHead_width = 0.10;//轨道面板头宽度
+double Size::editorPiano_width = 0.05;//钢琴与参数面板头宽度
+double Size::editorVScoller_width = 0.015;//竖向带预览卷滚缩放条宽度
+double Size::editorHScoller_height = 0.025;//横向带预览卷滚缩放条高度
+double Size::editorRuler_height = 0.025;//时间标尺高度

@@ -35,6 +35,7 @@ EditorWidget::EditorWidget()
 
 	this->trackView->setVisible(true);
 	this->noteView->setVisible(false);
+	this->paramView->setFocusOn(!this->noteView->isVisible());//µ±Òô·ûÃæ°å¹Ø±Õ£¬²ÎÊýÃæ°åÊ¹ÓÃ¾Û½¹Ä£Ê½
 	this->paramView->setVisible(false);
 
 	this->stretchableBar0->setVisible(false);
@@ -111,6 +112,7 @@ void EditorWidget::active(bool actived, EditorWidget::ActivedWidget widget)//½«¿
 	{
 		if (this->noteView->isVisible() != actived) {
 			this->noteView->setVisible(actived);
+			this->paramView->setFocusOn(!this->noteView->isVisible());//µ±Òô·ûÃæ°å¹Ø±Õ£¬²ÎÊýÃæ°åÊ¹ÓÃ¾Û½¹Ä£Ê½
 			if (actived) {
 				if ((int)this->trackView->isVisible() + (int)this->paramView->isVisible() == 1) {
 					this->stretchableBar0->setVisible(true);
