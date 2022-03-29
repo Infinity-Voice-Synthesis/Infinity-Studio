@@ -140,6 +140,10 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="data\DataModel.cpp" />
+    <ClCompile Include="data\Package.cpp" />
+    <ClCompile Include="llibs\DMH.cpp" />
+    <ClCompile Include="llibs\ILLibs.cpp" />
     <ClCompile Include="utils\CallBackManager.cpp" />
     <ClCompile Include="utils\Size.cpp" />
     <ClCompile Include="widgets\NoteView.cpp" />
@@ -160,8 +164,6 @@
     <ClCompile Include="utils\Device.cpp" />
     <ClCompile Include="utils\Data.cpp" />
     <ClCompile Include="widgets\CentralWidget.cpp" />
-    <ClCompile Include="CJsonObject\cJSON.c" />
-    <ClCompile Include="CJsonObject\CJsonObject.cpp" />
     <ClCompile Include="widgets\MenuBar.cpp" />
     <ClCompile Include="utils\Config.cpp" />
     <ClCompile Include="google\protobuf\any.cc" />
@@ -303,6 +305,10 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="data\DataModel.h" />
+    <ClInclude Include="data\Package.h" />
+    <ClInclude Include="llibs\DMH.h" />
+    <ClInclude Include="llibs\ILLibs.h" />
     <ClInclude Include="utils\CallBackManager.h" />
     <ClInclude Include="widgets\NoteView.h" />
     <ClInclude Include="widgets\ParamView.h" />
@@ -340,8 +346,6 @@
     <ClInclude Include="utils\Size.h" />
     <ClInclude Include="menus\ViewMenu.h" />
     <ClInclude Include="widgets\CentralWidget.h" />
-    <ClInclude Include="CJsonObject\cJSON.h" />
-    <ClInclude Include="CJsonObject\CJsonObject.hpp" />
     <ClInclude Include="widgets\MenuBar.h" />
     <ClInclude Include="utils\Config.h" />
     <ClInclude Include="google\protobuf\any.h" />

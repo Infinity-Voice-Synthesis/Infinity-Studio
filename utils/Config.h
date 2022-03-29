@@ -25,6 +25,11 @@ public:
 	static juce::var& getTheme();
 	static juce::var& getThemeSrc();
 
+	static juce::String script(const juce::String& name);
+	static juce::String scriptDir();
+	static juce::String appPath();
+	static juce::String appDir();
+
 private:
 	juce::String getBranchPathName();
 	juce::String getPackagePathName();

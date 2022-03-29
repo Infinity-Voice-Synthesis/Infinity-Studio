@@ -1,22 +1,18 @@
 ﻿#pragma once
 
-#include "DataModel.h"
 #include "Lua/lua.hpp"
-#include <string>
-#include <QCoreApplication>
-#include <QString>
-#include <functional>
+#include <JuceHeader.h>
 
 class DMH final
 {
-	static std::function<void(QString&)> console_mesFunction;
-	static std::function<void(QString&)> console_assFunction;
+	static std::function<void(juce::String&)> console_mesFunction;
+	static std::function<void(juce::String&)> console_assFunction;
 	static std::function<void()> console_clsFunction;
 
 public:
 	static void reg_mesFunctions(
-		std::function<void(QString&)> console_mesFunction,
-		std::function<void(QString&)> console_assFunction,
+		std::function<void(juce::String&)> console_mesFunction,
+		std::function<void(juce::String&)> console_assFunction,
 		std::function<void()> cconsole_lsFunction
 	);
 

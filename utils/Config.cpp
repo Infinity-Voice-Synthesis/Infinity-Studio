@@ -113,6 +113,26 @@ juce::var& Config::getThemeSrc()
 	return *(Config::_config->themeSources);
 }
 
+juce::String Config::script(const juce::String& name)
+{
+	return Config::_config->getScriptPath() + name + ".lua";
+}
+
+juce::String Config::scriptDir()
+{
+	return Config::_config->getScriptPath();
+}
+
+juce::String Config::appPath()
+{
+	return Config::_config->getEditorPath() + "InfinityStudio.exe";
+}
+
+juce::String Config::appDir()
+{
+	return Config::_config->getEditorPath();
+}
+
 juce::String Config::getBranchPathName()
 {
 	if (this->branch == "main") {

@@ -136,8 +136,6 @@
     <ClCompile Include="google\protobuf\wire_format.cc" />
     <ClCompile Include="google\protobuf\wire_format_lite.cc" />
     <ClCompile Include="google\protobuf\wrappers.pb.cc" />
-    <ClCompile Include="CJsonObject\cJSON.c" />
-    <ClCompile Include="CJsonObject\CJsonObject.cpp" />
     <ClCompile Include="Pb\utils\pair.pb.cc" />
     <ClCompile Include="Pb\container.pb.cc" />
     <ClCompile Include="Pb\note.pb.cc" />
@@ -170,6 +168,10 @@
     <ClCompile Include="widgets\ParamView.cpp" />
     <ClCompile Include="utils\Size.cpp" />
     <ClCompile Include="utils\CallBackManager.cpp" />
+    <ClCompile Include="llibs\DMH.cpp" />
+    <ClCompile Include="llibs\ILLibs.cpp" />
+    <ClCompile Include="data\DataModel.cpp" />
+    <ClCompile Include="data\Package.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JuceLibraryCode\JuceHeader.h" />
@@ -322,8 +324,6 @@
     <ClInclude Include="google\protobuf\wire_format.h" />
     <ClInclude Include="google\protobuf\wire_format_lite.h" />
     <ClInclude Include="google\protobuf\wrappers.pb.h" />
-    <ClInclude Include="CJsonObject\cJSON.h" />
-    <ClInclude Include="CJsonObject\CJsonObject.hpp" />
     <ClInclude Include="Pb\utils\pair.pb.h" />
     <ClInclude Include="Pb\container.pb.h" />
     <ClInclude Include="Pb\note.pb.h" />
@@ -373,6 +373,10 @@
     <ClInclude Include="widgets\NoteView.h" />
     <ClInclude Include="widgets\ParamView.h" />
     <ClInclude Include="utils\CallBackManager.h" />
+    <ClInclude Include="llibs\DMH.h" />
+    <ClInclude Include="llibs\ILLibs.h" />
+    <ClInclude Include="data\DataModel.h" />
+    <ClInclude Include="data\Package.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc">

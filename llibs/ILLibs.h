@@ -1,66 +1,61 @@
 ﻿#pragma once
 
-#include <QString>
-#include <QStringList>
-#include <QSet>
 #include "Lua/lua.hpp"
-#include <QCoreApplication>
-#include <QMutex>
-#include <QTime>
+#include <JuceHeader.h>
 
 class ILLibs
 {
-	static std::function<void(QString&)> console_mesFunction;
-	static std::function<void(QString&)> console_errFunction;
+	static std::function<void(juce::String&)> console_mesFunction;
+	static std::function<void(juce::String&)> console_errFunction;
 	static std::function<void()> console_clsFunction;
 
-	static std::function<bool(QString&)> thread_finFunction;
-	static std::function<QStringList()> thread_lstFunction;
-	static std::function<bool(QString&)> thread_creFunction;
-	static std::function<bool(QString&)> thread_rmvFunction;
-	static std::function<bool(QString&)> thread_chkFunction;
-	static std::function<bool(QString&)> thread_desFunction;
-	static std::function<bool(QString&, QString&)> thread_runFunction;
-	static std::function<bool(QString&, QString&)> thread_execFunction;
+	static std::function<bool(juce::String&)> thread_finFunction;
+	static std::function<juce::StringArray()> thread_lstFunction;
+	static std::function<bool(juce::String&)> thread_creFunction;
+	static std::function<bool(juce::String&)> thread_rmvFunction;
+	static std::function<bool(juce::String&)> thread_chkFunction;
+	static std::function<bool(juce::String&)> thread_desFunction;
+	static std::function<bool(juce::String&, juce::String&)> thread_runFunction;
+	static std::function<bool(juce::String&, juce::String&)> thread_execFunction;
 	static std::function<void()> thread_fluFunction;
 
-	static std::function<void* (QString&, QString&, size_t)> share_creFunction;
-	static std::function<bool(QString&, QString&)> share_finFunction;
-	static std::function<bool(QString&, QString&)> share_rmvFunction;
-	static std::function<size_t(QString&, QString&)> share_sizFunction;
-	static std::function<void* (QString&, QString&)> share_getFunction;
-	static std::function<bool(QString&)> share_cleFunction;
-	static std::function<QStringList(QString&)> share_lstFunction;
-	static std::function<void(QString&)> share_lckFunction;
-	static std::function<void(QString&)> share_ulkFunction;
+	static std::function<void* (juce::String&, juce::String&, size_t)> share_creFunction;
+	static std::function<bool(juce::String&, juce::String&)> share_finFunction;
+	static std::function<bool(juce::String&, juce::String&)> share_rmvFunction;
+	static std::function<size_t(juce::String&, juce::String&)> share_sizFunction;
+	static std::function<void* (juce::String&, juce::String&)> share_getFunction;
+	static std::function<bool(juce::String&)> share_cleFunction;
+	static std::function<juce::StringArray(juce::String&)> share_lstFunction;
+	static std::function<void(juce::String&)> share_lckFunction;
+	static std::function<void(juce::String&)> share_ulkFunction;
 
 public:
 	static void reg_mesFunctions(
-		std::function<void(QString&)> console_mesFunction,
-		std::function<void(QString&)> console_errFunction,
+		std::function<void(juce::String&)> console_mesFunction,
+		std::function<void(juce::String&)> console_errFunction,
 		std::function<void()> cconsole_lsFunction
 	);
 	static void reg_thrFunctions(
-		std::function<bool(QString&)> thread_finFunction,
-		std::function<QStringList()> thread_lstFunction,
-		std::function<bool(QString&)> thread_creFunction,
-		std::function<bool(QString&)> thread_rmvFunction,
-		std::function<bool(QString&)> thread_chkFunction,
-		std::function<bool(QString&)> thread_desFunction,
-		std::function<bool(QString&, QString&)> thread_runFunction,
-		std::function<bool(QString&, QString&)> thread_execFunction,
+		std::function<bool(juce::String&)> thread_finFunction,
+		std::function<juce::StringArray()> thread_lstFunction,
+		std::function<bool(juce::String&)> thread_creFunction,
+		std::function<bool(juce::String&)> thread_rmvFunction,
+		std::function<bool(juce::String&)> thread_chkFunction,
+		std::function<bool(juce::String&)> thread_desFunction,
+		std::function<bool(juce::String&, juce::String&)> thread_runFunction,
+		std::function<bool(juce::String&, juce::String&)> thread_execFunction,
 		std::function<void()> thread_fluFunction
 	);
 	static void reg_shrFunctions(
-		std::function<void* (QString&, QString&, size_t)> share_creFunction,
-		std::function<bool(QString&, QString&)> share_finFunction,
-		std::function<bool(QString&, QString&)> share_rmvFunction,
-		std::function<size_t(QString&, QString&)> share_sizFunction,
-		std::function<void* (QString&, QString&)> share_getFunction,
-		std::function<bool(QString&)> share_cleFunction,
-		std::function<QStringList(QString&)> share_lstFunction,
-		std::function<void(QString&)> share_lckFunction,
-		std::function<void(QString&)> share_ulkFunction
+		std::function<void* (juce::String&, juce::String&, size_t)> share_creFunction,
+		std::function<bool(juce::String&, juce::String&)> share_finFunction,
+		std::function<bool(juce::String&, juce::String&)> share_rmvFunction,
+		std::function<size_t(juce::String&, juce::String&)> share_sizFunction,
+		std::function<void* (juce::String&, juce::String&)> share_getFunction,
+		std::function<bool(juce::String&)> share_cleFunction,
+		std::function<juce::StringArray(juce::String&)> share_lstFunction,
+		std::function<void(juce::String&)> share_lckFunction,
+		std::function<void(juce::String&)> share_ulkFunction
 	);
 
 	static int infinity_runtime_scriptPath(lua_State* state);
