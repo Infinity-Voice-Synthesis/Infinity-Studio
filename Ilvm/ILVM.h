@@ -1,84 +1,80 @@
 ﻿#pragma once
 
-#include <QObject>
-#include <QList>
+#include <JuceHeader.h>
 #include "LThread.h"
-#include "Infinity_global.h"
-#include "Infinity_Events.h"
-#include <QMessageBox>
-#include "ILLibs.h"
-#include "DMH.h"
+#include "llibs/ILLibs.h"
+#include "llibs/DMH.h"
 
 #define ILVM_COPYRIGHT "Infinity Studio Script Interpreter 1.0.0" "  Copyright (C) 2019-2022 Infinity Synthesis Team"
 
-class ILVM : public QObject
+class ILVM final
 {
-	Q_OBJECT
-	
-	ILVM(QObject *parent);
+public:
+	ILVM();
 	~ILVM();
 
-	static ILVM vm;
+private:
+	static std::unique_ptr<ILVM> vm;
 
-	QList<LThread*> threads;
-	QList<LThread*> threads_bin;
+	std::vector<LThread*> threads;
+	std::vector<LThread*> threads_bin;
 	LThread* mainThread = nullptr;
 
-	const QString mainId = "_main";
-	const QString destoryId = "_destory";
+	const juce::String mainId = "_main";
+	const juce::String destoryId = "_destory";
 
-	static QString outStrTemp;
+	static juce::String outStrTemp;
 
 	bool isSafeMode = false;
 
 	void VMPushOptionalFunctions(LThread* thread);
 	void VMPushAllFunctions(LThread* thread);
 
-public:
-	static ILVM& getVM();
-
 	static void lStdOut(lua_State* L, const char* data, size_t size);
 	static void lStdOutLine(lua_State* L);
 	static void lStdOutErr(lua_State* L, const char* format, const char* data);
 
+public:
 	void mainCritical();
 
-	bool findThread(QString id);
-	QStringList getThreadList();
-	bool createThread(QString id);
-	bool removeThread(QString id);
+	bool findThread(juce::String id);
+	juce::StringArray getThreadList();
+	bool createThread(juce::String id);
+	bool removeThread(juce::String id);
 
-	bool destoryThread(QString id);
+	bool destoryThread(juce::String id);
 
-	bool doStringOnThread(QString id, QString str);
-	bool doFileOnThread(QString id, QString file);
+	bool doStringOnThread(juce::String id, juce::String str);
+	bool doFileOnThread(juce::String id, juce::String file);
 
-	bool threadIsRunning(QString id);
+	bool threadIsRunning(juce::String id);
 
 	void flushBin();
 
-	bool checkShare(QString id, QString key);
-	void* newShare(QString id, QString key, size_t size);
-	bool removeShare(QString id, QString key);
-	void* getShare(QString id, QString key);
-	size_t sizeShare(QString id, QString key);
-	bool clearShare(QString id);
-	QStringList listShare(QString id);
-	void lockShare(QString id);
-	void unlockShare(QString id);
+	bool checkShare(juce::String id, juce::String key);
+	void* newShare(juce::String id, juce::String key, size_t size);
+	bool removeShare(juce::String id, juce::String key);
+	void* getShare(juce::String id, juce::String key);
+	size_t sizeShare(juce::String id, juce::String key);
+	bool clearShare(juce::String id);
+	juce::StringArray listShare(juce::String id);
+	void lockShare(juce::String id);
+	void unlockShare(juce::String id);
 
-public slots:
-	void on_commandsIn(QString command);
+public:
+	void on_commandsIn(juce::String command);
 
-private slots:
-	void on_threadStart(QString id);
-	void on_threadStop(QString id);
+private:
+	void on_threadStart(juce::String id);
+	void on_threadStop(juce::String id);
 
-signals:
-	void errorMessage(QString message);
-	void normalMessage(QString message);
-	void clearMessage();
+private:
+	static std::function<void(juce::String)> errorMessage;
+	static std::function<void(juce::String)> normalMessage;
+	static std::function<void(void)> clearMessage;
 
-	void mainStart();
-	void mainStop();
+	static std::function<void(void)> mainStart;
+	static std::function<void(void)> mainStop;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ILVM)
 };

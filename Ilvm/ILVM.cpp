@@ -1,29 +1,36 @@
 ﻿#include "ILVM.h"
 
-ILVM ILVM::vm = ILVM(nullptr);
-QString ILVM::outStrTemp;
+std::unique_ptr<ILVM> ILVM::vm = std::make_unique<ILVM>();
+juce::String ILVM::outStrTemp;
+
+std::function<void(juce::String)> ILVM::errorMessage;
+std::function<void(juce::String)> ILVM::normalMessage;
+std::function<void(void)> ILVM::clearMessage;
+
+std::function<void(void)> ILVM::mainStart;
+std::function<void(void)> ILVM::mainStop;
 
 void ILVM::lStdOut(lua_State* L, const char* data, size_t size)
 {
-	for (int i = 0; i < size; i++) {
-		ILVM::outStrTemp.append(data[i]);
-		QApplication::processEvents();
-	}
+	juce::String jstr = juce::String::createStringFromData(data, size);
+	ILVM::outStrTemp.append(jstr, jstr.length());
 }
 
 void ILVM::lStdOutLine(lua_State* L)
 {
-	emit ILVM::getVM().normalMessage(ILVM::outStrTemp);
+	ILVM::vm->normalMessage(ILVM::outStrTemp);
 	ILVM::outStrTemp.clear();
 }
 
 void ILVM::lStdOutErr(lua_State* L, const char* format, const char* data)
 {
-	emit ILVM::getVM().errorMessage(QString::asprintf(format, data));
+	std::string str;
+	str.reserve(strlen(format) + strlen(data));
+	std::sprintf(str.data(), format, data);
+	ILVM::vm->errorMessage(juce::String::createStringFromData(str.c_str(), str.size()));
 }
 
-ILVM::ILVM(QObject *parent)
-	: QObject(parent)
+ILVM::ILVM()
 {
 	LThread::set_destory(this->destoryId);
 
@@ -32,37 +39,37 @@ ILVM::ILVM(QObject *parent)
 	set_LUA_InfOError(ILVM::lStdOutErr);
 
 	ILLibs::reg_mesFunctions(
-		[this](QString& message) {emit this->normalMessage(message); },
-		[this](QString& message) {emit this->errorMessage(message); },
-		[this] {emit this->clearMessage(); }
+		[this](juce::String& message) {this->normalMessage(message); },
+		[this](juce::String& message) {this->errorMessage(message); },
+		[this] {this->clearMessage(); }
 	);
 	ILLibs::reg_thrFunctions(
-		[this](QString& id) {return this->findThread(id); },
+		[this](juce::String& id) {return this->findThread(id); },
 		[this] {return this->getThreadList(); },
-		[this](QString& id) {return this->createThread(id); },
-		[this](QString& id) {return this->removeThread(id); },
-		[this](QString& id) {return this->threadIsRunning(id); },
-		[this](QString& id) {return this->destoryThread(id); },
-		[this](QString& id, QString& str) {return this->doStringOnThread(id, str); },
-		[this](QString& id, QString& str) {return this->doFileOnThread(id, str); },
+		[this](juce::String& id) {return this->createThread(id); },
+		[this](juce::String& id) {return this->removeThread(id); },
+		[this](juce::String& id) {return this->threadIsRunning(id); },
+		[this](juce::String& id) {return this->destoryThread(id); },
+		[this](juce::String& id, juce::String& str) {return this->doStringOnThread(id, str); },
+		[this](juce::String& id, juce::String& str) {return this->doFileOnThread(id, str); },
 		[this] {this->flushBin(); }
 	);
 	ILLibs::reg_shrFunctions(
-		[this](QString& id, QString& key, size_t size) {return this->newShare(id, key, size); },
-		[this](QString& id, QString& key) {return this->checkShare(id, key); },
-		[this](QString& id, QString& key) {return this->removeShare(id, key); },
-		[this](QString& id, QString& key) {return this->sizeShare(id, key); },
-		[this](QString& id, QString& key) {return this->getShare(id, key); },
-		[this](QString& id) {return this->clearShare(id); },
-		[this](QString& id) {return this->listShare(id); },
-		[this](QString& id) {this->lockShare(id); },
-		[this](QString& id) {this->unlockShare(id); }
+		[this](juce::String& id, juce::String& key, size_t size) {return this->newShare(id, key, size); },
+		[this](juce::String& id, juce::String& key) {return this->checkShare(id, key); },
+		[this](juce::String& id, juce::String& key) {return this->removeShare(id, key); },
+		[this](juce::String& id, juce::String& key) {return this->sizeShare(id, key); },
+		[this](juce::String& id, juce::String& key) {return this->getShare(id, key); },
+		[this](juce::String& id) {return this->clearShare(id); },
+		[this](juce::String& id) {return this->listShare(id); },
+		[this](juce::String& id) {this->lockShare(id); },
+		[this](juce::String& id) {this->unlockShare(id); }
 	);
 
 	DMH::reg_mesFunctions(
-		[this](QString& message) {emit this->normalMessage(message); },
-		[this](QString& message) {emit this->errorMessage(message); },
-		[this] {emit this->clearMessage(); }
+		[this](juce::String& message) {this->normalMessage(message); },
+		[this](juce::String& message) {this->errorMessage(message); },
+		[this] {this->clearMessage(); }
 	);
 }
 
@@ -71,42 +78,29 @@ ILVM::~ILVM()
 	this->mainThread = nullptr;
 
 	for (auto thread : this->threads) {
-		if (thread->isRunning()) {
-			thread->terminate();
-			thread->wait();
+		if (thread->isThreadRunning()) {
+			thread->stopThread(0);
+			thread->waitForThreadToExit(-1);
 		}
-		thread->deleteLater();
+		delete thread;
 	}
 	this->threads.clear();
 
 	for (auto thread : this->threads_bin) {
-		if (thread->isRunning()) {
-			thread->terminate();
-			thread->wait();
+		if (thread->isThreadRunning()) {
+			thread->stopThread(0);
+			thread->waitForThreadToExit(-1);
 		}
-		thread->deleteLater();
+		delete thread;
 	}
 	this->threads_bin.clear();
 }
 
-ILVM& ILVM::getVM()
-{
-	return ILVM::vm;
-}
-
-void ILVM::on_commandsIn(QString command)
+void ILVM::on_commandsIn(juce::String command)
 {
 	if (this->mainThread == nullptr) {
-		while (this->mainThread == nullptr) {
-			this->mainThread = new(std::nothrow) LThread(this);
-			if (this->mainThread == nullptr) {
-				QMessageBox::Button result = QMessageBox::critical(nullptr, "Infinity Studio 0", "Application can't alloc memory for object \"mainThread\" on heap!\nPlease check your memory then retry or abort this application!", QMessageBox::Retry | QMessageBox::Button::Abort, QMessageBox::Abort);
-				if (result != QMessageBox::Retry) {
-					return ;
-				}
-			}
-		}
-		this->threads.append(this->mainThread);
+		this->mainThread = new LThread;
+		this->threads.push_back(this->mainThread);
 
 		if (this->isSafeMode) {
 			this->VMPushOptionalFunctions(this->mainThread);
@@ -115,59 +109,48 @@ void ILVM::on_commandsIn(QString command)
 			this->VMPushAllFunctions(this->mainThread);
 		}
 
-		connect(this->mainThread, &LThread::errorMessage, this, &ILVM::errorMessage, Qt::ConnectionType::QueuedConnection);
-		connect(this->mainThread, &LThread::normalMessage, this, &ILVM::normalMessage, Qt::ConnectionType::QueuedConnection);
-		connect(this->mainThread, &LThread::tStarted, this, &ILVM::on_threadStart, Qt::ConnectionType::QueuedConnection);
-		connect(this->mainThread, &LThread::tEnded, this, &ILVM::on_threadStop, Qt::ConnectionType::QueuedConnection);
-
 		this->mainThread->setId(this->mainId);
 
-		emit this->normalMessage(QString(ILVM_COPYRIGHT));
-		emit this->normalMessage(QString(LUA_COPYRIGHT));
+		this->normalMessage(juce::String(ILVM_COPYRIGHT));
+		this->normalMessage(juce::String(LUA_COPYRIGHT));
 	}
 	if (!this->mainThread->doString(command)) {
-		emit this->errorMessage("Can't execute the command!");
+		this->errorMessage("Can't execute the command!");
 	}
 }
 
-void ILVM::on_threadStart(QString id)
+void ILVM::on_threadStart(juce::String id)
 {
 	if (id == this->mainId) {
-		emit this->mainStart();
+		this->mainStart();
 	}
 }
 
-void ILVM::on_threadStop(QString id)
+void ILVM::on_threadStop(juce::String id)
 {
 	if (id == this->mainId) {
-		emit this->mainStop();
+		this->mainStop();
 	}
 }
 
 void ILVM::mainCritical()
 {
-	for (int i = 0; i < this->threads.size(); i++) {
+	for (auto i = 0; i < this->threads.size(); i++) {
 		LThread* thread = this->threads.at(i);
 		if (thread->getId() == this->mainId) {
-			if (thread->isRunning()) {
+			if (thread->isThreadRunning()) {
 				this->mainThread = nullptr;
 
-				disconnect(thread, &LThread::errorMessage, this, &ILVM::errorMessage);
-				disconnect(thread, &LThread::normalMessage, this, &ILVM::normalMessage);
-				disconnect(thread, &LThread::tStarted, this, &ILVM::on_threadStart);
-				disconnect(thread, &LThread::tEnded, this, &ILVM::on_threadStop);
-
-				this->threads.removeAt(i);
-				this->threads_bin.append(thread);
+				this->threads.erase(this->threads.begin() + i);
+				this->threads_bin.push_back(thread);
 
 				thread->destory(this->destoryId);
-				thread->quit();
 
 				this->isSafeMode = true;
 
-				emit this->mainStop();
-				emit this->clearMessage();
-				emit this->errorMessage("Warning!!!!! The blocked Lua thread has been put into the background. Please save the data immediately and restart the editor!");
+				this->mainStop();
+				this->clearMessage();
+				this->errorMessage("Warning!!!!! The blocked Lua thread has been put into the background. Please save the data immediately and restart the editor!");
 			}
 			break;
 		}
@@ -232,7 +215,7 @@ void ILVM::VMPushAllFunctions(LThread* thread)
 	thread->loadUtils();
 }
 
-bool ILVM::findThread(QString id)
+bool ILVM::findThread(juce::String id)
 {
 	for (auto t : this->threads) {
 		if (t->getId() == id) {
@@ -242,16 +225,16 @@ bool ILVM::findThread(QString id)
 	return false;
 }
 
-QStringList ILVM::getThreadList()
+juce::StringArray ILVM::getThreadList()
 {
-	QStringList list;
+	juce::StringArray list;
 	for (auto t : this->threads) {
-		list.append(t->getId());
+		list.add(t->getId());
 	}
 	return list;
 }
 
-bool ILVM::createThread(QString id)
+bool ILVM::createThread(juce::String id)
 {
 	if (id == this->mainId || id == this->destoryId) {
 		return false;
@@ -265,34 +248,20 @@ bool ILVM::createThread(QString id)
 		}
 	}
 
-	LThread* thread = nullptr;
+	LThread* thread = new LThread;
 
-	while (thread == nullptr) {
-		thread = new(std::nothrow) LThread(this);
-		if (thread == nullptr) {
-			QMessageBox::Button result = QMessageBox::critical(nullptr, "Infinity Studio 0", "Application can't alloc memory for object \"thread\" on heap!\nPlease check your memory then retry or abort this application!", QMessageBox::Retry | QMessageBox::Button::Abort, QMessageBox::Abort);
-			if (result != QMessageBox::Retry) {
-				return false;
-			}
-		}
-	}
-
-	this->threads.append(thread);
+	this->threads.push_back(thread);
 
 	this->VMPushAllFunctions(thread);
-
-	connect(thread, &LThread::errorMessage, this, &ILVM::errorMessage, Qt::ConnectionType::QueuedConnection);
-	connect(thread, &LThread::normalMessage, this, &ILVM::normalMessage, Qt::ConnectionType::QueuedConnection);
-	
 	thread->setId(id);
 
-	emit this->normalMessage(QString(ILVM_COPYRIGHT));
-	emit this->normalMessage(QString(LUA_COPYRIGHT));
+	this->normalMessage(juce::String(ILVM_COPYRIGHT));
+	this->normalMessage(juce::String(LUA_COPYRIGHT));
 
 	return true;
 }
 
-bool ILVM::removeThread(QString id)
+bool ILVM::removeThread(juce::String id)
 {
 	if (id == this->mainId || id == this->destoryId) {
 		return false;
@@ -300,15 +269,12 @@ bool ILVM::removeThread(QString id)
 	for (int i = 0; i < this->threads.size(); i++) {
 		LThread* t = this->threads.at(i);
 		if (t->getId() == id) {
-			if (t->isRunning()) {
+			if (t->isThreadRunning()) {
 				return false;
 			}
-			disconnect(t, &LThread::errorMessage, this, &ILVM::errorMessage);
-			disconnect(t, &LThread::normalMessage, this, &ILVM::normalMessage);
 
-			t->deleteLater();
-
-			this->threads.removeAt(i);
+			delete t;
+			this->threads.erase(this->threads.begin() + i);
 
 			return true;
 		}
@@ -316,7 +282,7 @@ bool ILVM::removeThread(QString id)
 	return false;
 }
 
-bool ILVM::doStringOnThread(QString id, QString str)
+bool ILVM::doStringOnThread(juce::String id, juce::String str)
 {
 	if (id == this->mainId || id == this->destoryId) {
 		return false;
@@ -329,7 +295,7 @@ bool ILVM::doStringOnThread(QString id, QString str)
 	return false;
 }
 
-bool ILVM::doFileOnThread(QString id, QString file)
+bool ILVM::doFileOnThread(juce::String id, juce::String file)
 {
 	if (id == this->mainId || id == this->destoryId) {
 		return false;
@@ -342,17 +308,17 @@ bool ILVM::doFileOnThread(QString id, QString file)
 	return false;
 }
 
-bool ILVM::threadIsRunning(QString id)
+bool ILVM::threadIsRunning(juce::String id)
 {
 	for (auto t : this->threads) {
 		if (t->getId() == id) {
-			return t->isRunning();
+			return t->isThreadRunning();
 		}
 	}
 	return false;
 }
 
-bool ILVM::destoryThread(QString id)
+bool ILVM::destoryThread(juce::String id)
 {
 	if (id == this->mainId || id == this->destoryId) {
 		return false;
@@ -360,15 +326,11 @@ bool ILVM::destoryThread(QString id)
 	for (int i = 0; i < this->threads.size(); i++) {
 		LThread* t = this->threads.at(i);
 		if (t->getId() == id) {
-			if (t->isRunning()) {
-				disconnect(t, &LThread::errorMessage, this, &ILVM::errorMessage);
-				disconnect(t, &LThread::normalMessage, this, &ILVM::normalMessage);
-
-				this->threads.removeAt(i);
-				this->threads_bin.append(t);
+			if (t->isThreadRunning()) {
+				this->threads.erase(this->threads.begin() + i);
+				this->threads_bin.push_back(t);
 
 				t->destory(this->destoryId);
-				t->quit();
 
 				return true;
 			}
@@ -381,14 +343,14 @@ void ILVM::flushBin()
 {
 	for (int i = this->threads_bin.size() - 1; i >= 0; i--) {
 		LThread* t = this->threads_bin.at(i);
-		if (!t->isRunning()) {
-			t->deleteLater();
-			this->threads_bin.removeAt(i);
+		if (!t->isThreadRunning()) {
+			delete t;
+			this->threads_bin.erase(this->threads_bin.begin() + i);
 		}
 	}
 }
 
-bool ILVM::checkShare(QString id, QString key)
+bool ILVM::checkShare(juce::String id, juce::String key)
 {
 	if (id == this->destoryId) {
 		return false;
@@ -401,7 +363,7 @@ bool ILVM::checkShare(QString id, QString key)
 	return false;
 }
 
-void* ILVM::newShare(QString id, QString key, size_t size)
+void* ILVM::newShare(juce::String id, juce::String key, size_t size)
 {
 	if (id == this->destoryId) {
 		return nullptr;
@@ -414,7 +376,7 @@ void* ILVM::newShare(QString id, QString key, size_t size)
 	return nullptr;
 }
 
-bool ILVM::removeShare(QString id, QString key)
+bool ILVM::removeShare(juce::String id, juce::String key)
 {
 	if (id == this->destoryId) {
 		return false;
@@ -427,7 +389,7 @@ bool ILVM::removeShare(QString id, QString key)
 	return false;
 }
 
-void* ILVM::getShare(QString id, QString key)
+void* ILVM::getShare(juce::String id, juce::String key)
 {
 	if (id == this->destoryId) {
 		return nullptr;
@@ -440,7 +402,7 @@ void* ILVM::getShare(QString id, QString key)
 	return nullptr;
 }
 
-size_t ILVM::sizeShare(QString id, QString key)
+size_t ILVM::sizeShare(juce::String id, juce::String key)
 {
 	if (id == this->destoryId) {
 		return 0;
@@ -453,7 +415,7 @@ size_t ILVM::sizeShare(QString id, QString key)
 	return 0;
 }
 
-bool ILVM::clearShare(QString id)
+bool ILVM::clearShare(juce::String id)
 {
 	if (id == this->destoryId) {
 		return false;
@@ -466,20 +428,20 @@ bool ILVM::clearShare(QString id)
 	return false;
 }
 
-QStringList ILVM::listShare(QString id)
+juce::StringArray ILVM::listShare(juce::String id)
 {
 	if (id == this->destoryId) {
-		return QStringList();
+		return juce::StringArray();
 	}
 	for (auto t : this->threads) {
 		if (t->getId() == id) {
 			return t->listShare();
 		}
 	}
-	return QStringList();
+	return juce::StringArray();
 }
 
-void ILVM::lockShare(QString id)
+void ILVM::lockShare(juce::String id)
 {
 	if (id == this->destoryId) {
 		return;
@@ -492,7 +454,7 @@ void ILVM::lockShare(QString id)
 	return;
 }
 
-void ILVM::unlockShare(QString id)
+void ILVM::unlockShare(juce::String id)
 {
 	if (id == this->destoryId) {
 		return;

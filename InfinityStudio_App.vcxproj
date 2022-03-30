@@ -142,6 +142,8 @@
   <ItemGroup>
     <ClCompile Include="data\DataModel.cpp" />
     <ClCompile Include="data\Package.cpp" />
+    <ClCompile Include="Ilvm\ILVM.cpp" />
+    <ClCompile Include="Ilvm\LThread.cpp" />
     <ClCompile Include="llibs\DMH.cpp" />
     <ClCompile Include="llibs\ILLibs.cpp" />
     <ClCompile Include="utils\CallBackManager.cpp" />
@@ -307,6 +309,8 @@
   <ItemGroup>
     <ClInclude Include="data\DataModel.h" />
     <ClInclude Include="data\Package.h" />
+    <ClInclude Include="Ilvm\ILVM.h" />
+    <ClInclude Include="Ilvm\LThread.h" />
     <ClInclude Include="llibs\DMH.h" />
     <ClInclude Include="llibs\ILLibs.h" />
     <ClInclude Include="utils\CallBackManager.h" />

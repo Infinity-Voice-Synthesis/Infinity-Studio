@@ -1,59 +1,59 @@
 #pragma once
-
-#include <QThread>
-#include <QCoreApplication>
-#include <QQueue>
-#include <QMutex>
-#include <QMap>
+#include <JuceHeader.h>
 
 #include "Lua/lua.hpp"
 
-#include "ILLibs.h"
+#include "llibs/ILLibs.h"
 
-class LThread : public QThread
+class LThread : public juce::Thread
 {
-	Q_OBJECT
-
 public:
-	LThread(QObject *parent);
+	LThread();
 	~LThread();
 
-	bool doFile(QString name);
-	bool doString(QString str);
+	static void init(
+		std::function<void(juce::String)> errorMessage,
+		std::function<void(juce::String)> normalMessage,
+		std::function<void(juce::String)> tStarted,
+		std::function<void(juce::String)> tEnded
+	);
 
-	bool setId(QString id);
-	QString getId();
+	bool doFile(juce::String name);
+	bool doString(juce::String str);
 
-	bool destory(QString id);
+	bool setId(juce::String id);
+	juce::String getId();
+
+	bool destory(juce::String id);
 
 	void beginGlobalTable();
-	void endGlobalTable(QString name);
+	void endGlobalTable(juce::String name);
 
-	void beginTable(QString name);
+	void beginTable(juce::String name);
 	void endTable();
 
-	void addFunction(QString name, lua_CFunction function);
+	void addFunction(juce::String name, lua_CFunction function);
 
 	void loadUtils();
 
-	static void set_destory(QString destoryId);
+	static void set_destory(juce::String destoryId);
 
-	bool checkShare(QString key);
-	void* newShare(QString key, size_t size);
-	bool removeShare(QString key);
-	void* getShare(QString key);
-	size_t sizeShare(QString key);
+	bool checkShare(juce::String key);
+	void* newShare(juce::String key, size_t size);
+	bool removeShare(juce::String key);
+	void* getShare(juce::String key);
+	size_t sizeShare(juce::String key);
 	bool clearShare();
-	QStringList listShare();
+	juce::StringArray listShare();
 	void lockShare();
 	void unlockShare();
 
 private:
 	lua_State* lstate = nullptr;
 
-	QString lFileName;
-	QString Id;
-	QMutex idMutex;
+	juce::String lFileName;
+	juce::String Id;
+	juce::ReadWriteLock idMutex;
 
 	enum class LType {
 		DoFile,
@@ -62,22 +62,23 @@ private:
 
 	LType tType = LType::DoFile;
 
-	QQueue<QString> strList;
+	std::queue<juce::String> strList;
 
-	static QString destoryId;
+	static juce::String destoryId;
 
 	static void hookFunction(lua_State* L, lua_Debug* ar);
 
-	QMap<QString, QPair<size_t, void*>> shareData;
-	QMutex shareMutex;
+	juce::HashMap<juce::String, std::pair<size_t, void*>> shareData;
+	std::mutex shareMutex;
 
-protected:
 	void run()override;
 
-signals:
-	void errorMessage(QString message);
-	void normalMessage(QString message);
+private:
+	static std::function<void(juce::String)> errorMessage;
+	static std::function<void(juce::String)> normalMessage;
 
-	void tStarted(QString id);
-	void tEnded(QString id);
+	static std::function<void(juce::String)> tStarted;
+	static std::function<void(juce::String)> tEnded;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LThread)
 };

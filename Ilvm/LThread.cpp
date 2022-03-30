@@ -1,31 +1,51 @@
 ﻿#include "LThread.h"
+#include "utils/Config.h"
 
 extern "C" {
 #include "Lua/lstate.h"
 }
 
-QString LThread::destoryId;
+juce::String LThread::destoryId;
 
-void LThread::set_destory(QString destoryId)
+std::function<void(juce::String)> LThread::errorMessage;
+std::function<void(juce::String)> LThread::normalMessage;
+
+std::function<void(juce::String)> LThread::tStarted;
+std::function<void(juce::String)> LThread::tEnded;
+
+void LThread::init(
+	std::function<void(juce::String)> errorMessage,
+	std::function<void(juce::String)> normalMessage,
+	std::function<void(juce::String)> tStarted,
+	std::function<void(juce::String)> tEnded
+)
+{
+	LThread::errorMessage = errorMessage;
+	LThread::normalMessage = normalMessage;
+	LThread::tStarted = tStarted;
+	LThread::tEnded = tEnded;
+}
+
+void LThread::set_destory(juce::String destoryId)
 {
 	LThread::destoryId = destoryId;
 }
 
 void LThread::hookFunction(lua_State* L, lua_Debug* ar)
 {
-	QMutex* mutex = (QMutex*)L->thread_mutex;
-	QString* str = (QString*)L->thread_id;
-	mutex->lock();
-	QString tName = (*str);
-	mutex->unlock();
+	juce::ReadWriteLock* mutex = (juce::ReadWriteLock*)L->thread_mutex;
+	juce::String* str = (juce::String*)L->thread_id;
+	mutex->enterRead();
+	juce::String tName = (*str);
+	mutex->exitRead();
 	if (tName == LThread::destoryId) {
 		lua_pushstring(L, "This thread is destoried!");
 		lua_error(L);
 	}
 }
 
-LThread::LThread(QObject *parent)
-	: QThread(parent)
+LThread::LThread()
+	: juce::Thread("LThread")
 {
 	this->lstate = luaL_newstate();
 	this->lstate->thread_id = (void*)(&(this->Id));
@@ -35,14 +55,14 @@ LThread::LThread(QObject *parent)
 
 	luaL_openlibs(this->lstate);
 
-	bool error1 = luaL_dostring(this->lstate, QString("package.path = '" + QCoreApplication::applicationDirPath() + "/scripts/?.lua;;"+ QCoreApplication::applicationDirPath() + "/scripts/?/?.lua;'").toStdString().c_str());
+	bool error1 = luaL_dostring(this->lstate, juce::String("package.path = '" + Config::scriptDir() + "?.lua;;" + Config::scriptDir() + "?/?.lua;'").toStdString().c_str());
 	if (error1) {
-		qDebug("Lua Error:%s", qPrintable(lua_tostring(this->lstate, -1)));
+		//qDebug("Lua Error:%s", qPrintable(lua_tostring(this->lstate, -1)));
 		lua_pop(this->lstate, 1);
 	}
-	bool error2 = luaL_dostring(this->lstate, QString("package.cpath = '" + QCoreApplication::applicationDirPath() + "/scripts/libs/?.dll;'").toStdString().c_str());
+	bool error2 = luaL_dostring(this->lstate, juce::String("package.cpath = '" + Config::scriptDir() + "libs/?.dll;'").toStdString().c_str());
 	if (error2) {
-		qDebug("Lua Error:%s", qPrintable(lua_tostring(this->lstate, -1)));
+		//qDebug("Lua Error:%s", qPrintable(lua_tostring(this->lstate, -1)));
 		lua_pop(this->lstate, 1);
 	}
 }
@@ -51,7 +71,7 @@ LThread::~LThread()
 {
 	lua_close(this->lstate);
 
-	for (auto& p : this->shareData) {
+	for (auto p : this->shareData) {
 		free(p.second);
 	}
 	this->shareData.clear();
@@ -59,57 +79,59 @@ LThread::~LThread()
 
 void LThread::run()
 {
-	emit this->tStarted(this->Id);
+	this->tStarted(this->Id);
 	if (this->tType == LType::DoFile) {
 		bool error = luaL_dofile(this->lstate, this->lFileName.toStdString().c_str());
 		if (error) {
-			emit this->errorMessage(QString::fromStdString(lua_tostring(this->lstate, -1)));
+			std::string str = lua_tostring(this->lstate, -1);
+			this->errorMessage(juce::String::createStringFromData(str.c_str(), str.size()));
 			lua_pop(this->lstate, 1);
-			emit this->tEnded(this->Id);
+			this->tEnded(this->Id);
 			return;
 		}
 	}
 	while (this->strList.size() > 0) {
-		bool error = luaL_dostring(this->lstate, this->strList.dequeue().toStdString().c_str());
+		bool error = luaL_dostring(this->lstate, this->strList.front().toStdString().c_str());
+		this->strList.pop();
 		if (error) {
-			emit this->errorMessage(QString::fromStdString(lua_tostring(this->lstate, -1)));
+			std::string str = lua_tostring(this->lstate, -1);
+			this->errorMessage(juce::String::createStringFromData(str.c_str(), str.size()));
 			lua_pop(this->lstate, 1);
 		}
 	}
-	emit this->tEnded(this->Id);
-	quit();
+	this->tEnded(this->Id);
 }
 
-bool LThread::doFile(QString name)
+bool LThread::doFile(juce::String name)
 {
 	if (!this->Id.isEmpty()) {
-		if (!this->isRunning()) {
+		if (!this->isThreadRunning()) {
 			this->tType = LType::DoFile;
 			this->lFileName = name;
-			this->start();
+			this->startThread();
 			return true;
 		}
 	}
 	return false;
 }
 
-bool LThread::doString(QString str)
+bool LThread::doString(juce::String str)
 {
 	if (!this->Id.isEmpty()) {
 		this->tType = LType::DoString;
-		this->strList.enqueue(str);
-		if (!this->isRunning()) {
-			this->start();
+		this->strList.push(str);
+		if (!this->isThreadRunning()) {
+			this->startThread();
 		}
 		else {
-			emit this->normalMessage("The VM is running.Command will wait in queue.");
+			this->normalMessage("The VM is running.Command will wait in queue.");
 		}
 		return true;
 	}
 	return false;
 }
 
-bool LThread::setId(QString id)
+bool LThread::setId(juce::String id)
 {
 	if (!id.isEmpty()) {
 		if (this->Id.isEmpty()) {
@@ -120,7 +142,7 @@ bool LThread::setId(QString id)
 	return false;
 }
 
-QString LThread::getId()
+juce::String LThread::getId()
 {
 	return this->Id;
 }
@@ -130,12 +152,12 @@ void LThread::beginGlobalTable()
 	lua_newtable(this->lstate);
 }
 
-void LThread::endGlobalTable(QString name)
+void LThread::endGlobalTable(juce::String name)
 {
 	lua_setglobal(this->lstate, name.toStdString().c_str());
 }
 
-void LThread::beginTable(QString name)
+void LThread::beginTable(juce::String name)
 {
 	lua_pushstring(this->lstate, name.toStdString().c_str());
 	lua_newtable(this->lstate);
@@ -146,7 +168,7 @@ void LThread::endTable()
 	lua_settable(this->lstate, -3);
 }
 
-void LThread::addFunction(QString name, lua_CFunction function)
+void LThread::addFunction(juce::String name, lua_CFunction function)
 {
 	lua_pushstring(this->lstate, name.toStdString().c_str());
 	lua_pushcfunction(this->lstate, function);
@@ -158,28 +180,31 @@ void LThread::loadUtils()
 	std::string comm("IUtils = require(\"utils\")");
 	bool error = luaL_dostring(this->lstate, comm.c_str());
 	if (error) {
-		emit this->errorMessage(QString::fromStdString(lua_tostring(this->lstate, -1)));
+		std::string str = lua_tostring(this->lstate, -1);
+		this->errorMessage(juce::String::createStringFromData(str.c_str(), str.size()));
 		lua_pop(this->lstate, 1);
 	}
 	error = luaL_dostring(this->lstate, "Infinity.Console.print = print");
 	if (error) {
-		emit this->errorMessage(QString::fromStdString(lua_tostring(this->lstate, -1)));
+		std::string str = lua_tostring(this->lstate, -1);
+		this->errorMessage(juce::String::createStringFromData(str.c_str(), str.size()));
 		lua_pop(this->lstate, 1);
 	}
 }
 
-bool LThread::destory(QString id)
+bool LThread::destory(juce::String id)
 {
-	if (this->isRunning()) {
-		this->idMutex.lock();
+	if (this->isThreadRunning()) {
+		this->idMutex.enterWrite();
+		this->setCurrentThreadName(id);
 		this->Id = id;
-		this->idMutex.unlock();
+		this->idMutex.exitWrite();
 		return true;
 	}
 	return false;
 }
 
-bool LThread::checkShare(QString key)
+bool LThread::checkShare(juce::String key)
 {
 	this->shareMutex.lock();
 	bool result = this->shareData.contains(key);
@@ -187,48 +212,48 @@ bool LThread::checkShare(QString key)
 	return result;
 }
 
-void* LThread::newShare(QString key, size_t size)
+void* LThread::newShare(juce::String key, size_t size)
 {
 	if (checkShare(key)) {
 		return nullptr;
 	}
 	this->shareMutex.lock();
 	void* result = malloc(size);
-	this->shareData.insert(key, qMakePair(size, result));
+	this->shareData.set(key, std::make_pair(size, result));
 	this->shareMutex.unlock();
 	return result;
 }
 
-bool LThread::removeShare(QString key)
+bool LThread::removeShare(juce::String key)
 {
 	if (!checkShare(key)) {
 		return false;
 	}
 	this->shareMutex.lock();
-	free(this->shareData.value(key).second);
+	free(this->shareData.getReference(key).second);
 	this->shareData.remove(key);
 	this->shareMutex.unlock();
 	return true;
 }
 
-void* LThread::getShare(QString key)
+void* LThread::getShare(juce::String key)
 {
 	if (!checkShare(key)) {
 		return nullptr;
 	}
 	this->shareMutex.lock();
-	void* result = this->shareData.value(key).second;
+	void* result = this->shareData.getReference(key).second;
 	this->shareMutex.unlock();
 	return result;
 }
 
-size_t LThread::sizeShare(QString key)
+size_t LThread::sizeShare(juce::String key)
 {
 	if (!checkShare(key)) {
 		return 0;
 	}
 	this->shareMutex.lock();
-	size_t result = this->shareData.value(key).first;
+	size_t result = this->shareData.getReference(key).first;
 	this->shareMutex.unlock();
 	return result;
 }
@@ -236,7 +261,7 @@ size_t LThread::sizeShare(QString key)
 bool LThread::clearShare()
 {
 	this->shareMutex.lock();
-	for (auto& p : this->shareData) {
+	for (auto p : this->shareData) {
 		if (p.second != nullptr) {
 			free(p.second);
 		}
@@ -246,10 +271,13 @@ bool LThread::clearShare()
 	return true;
 }
 
-QStringList LThread::listShare()
+juce::StringArray LThread::listShare()
 {
 	this->shareMutex.lock();
-	QStringList result = this->shareData.keys();
+	juce::StringArray result;
+	for (auto it = this->shareData.begin(); it != this->shareData.end(); it++) {
+		result.add(it.getKey());
+	}
 	this->shareMutex.unlock();
 	return result;
 }
