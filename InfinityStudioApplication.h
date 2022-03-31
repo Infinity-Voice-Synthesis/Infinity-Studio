@@ -8,6 +8,7 @@
 #include "menus/utils/MenuManager.h"
 #include "utils/Utils.h"
 #include "utils/CallBackManager.h"
+#include "Ilvm/ILVM.h"
 
 class InfinityStudioApplication final :
     public juce::JUCEApplication
@@ -30,6 +31,16 @@ public:
         );
         Config::refreshConfigs();
         Config::refreshTranslates();//配置初始化
+
+        ILVM::init(
+            [](const juce::String& str) {CallBackManager::call<void(const juce::String&)>("lambda_ConsoleWidget_ErrorMessage_const_juce::String&", str); },
+            [](const juce::String& str) {CallBackManager::call<void(const juce::String&)>("lambda_ConsoleWidget_NormalMessage_const_juce::String&", str); },
+            [] {CallBackManager::call<void(void)>("lambda_ConsoleWidget_ClearMessage_void"); },
+            [] {CallBackManager::call<void(void)>("lambda_StatusBar_VMStart_void"); },
+            [] {CallBackManager::call<void(void)>("lambda_StatusBar_VMStop_void"); }
+        );//初始化Lua虚拟机
+
+        //-------------------------前后端分界-----------------------------//
 
         this->loadFont(Config::tsFull("main", "font"));//载入字体
 
@@ -55,6 +66,8 @@ public:
         google::protobuf::ShutdownProtobufLibrary();
         MenuManager::destory();
         Source::destory();
+        //-------------------------前后端分界-----------------------------//
+        ILVM::destory();
         Config::destory();
         Utils::destory();
         this->quit();

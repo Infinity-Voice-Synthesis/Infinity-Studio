@@ -1,10 +1,15 @@
 ﻿#include "ILVM.h"
+#include "llibs/ILLibs.h"
+#include "llibs/DMH.h"
+
+//In this file,there were many ass warnings C6031,then I disabled the warning C6031 near the places
+//which cause that warning..
 
 std::unique_ptr<ILVM> ILVM::vm = std::make_unique<ILVM>();
 juce::String ILVM::outStrTemp;
 
-std::function<void(juce::String)> ILVM::errorMessage;
-std::function<void(juce::String)> ILVM::normalMessage;
+std::function<void(const juce::String&)> ILVM::errorMessage;
+std::function<void(const juce::String&)> ILVM::normalMessage;
 std::function<void(void)> ILVM::clearMessage;
 
 std::function<void(void)> ILVM::mainStart;
@@ -18,7 +23,9 @@ void ILVM::lStdOut(lua_State* L, const char* data, size_t size)
 
 void ILVM::lStdOutLine(lua_State* L)
 {
+#pragma warning(disable:6031)
 	ILVM::vm->normalMessage(ILVM::outStrTemp);
+#pragma warning(default:6031)
 	ILVM::outStrTemp.clear();
 }
 
@@ -27,50 +34,83 @@ void ILVM::lStdOutErr(lua_State* L, const char* format, const char* data)
 	std::string str;
 	str.reserve(strlen(format) + strlen(data));
 	std::sprintf(str.data(), format, data);
+#pragma warning(disable:6031)
 	ILVM::vm->errorMessage(juce::String::createStringFromData(str.c_str(), str.size()));
+#pragma warning(default:6031)
 }
 
-ILVM::ILVM()
+void ILVM::init(
+	std::function<void(const juce::String&)> errorMessage,
+	std::function<void(const juce::String&)> normalMessage,
+	std::function<void(void)> clearMessage,
+	std::function<void(void)> mainStart,
+	std::function<void(void)> mainStop
+)
 {
-	LThread::set_destory(this->destoryId);
+	ILVM::errorMessage = errorMessage;
+	ILVM::normalMessage = normalMessage;
+	ILVM::clearMessage = clearMessage;
+	ILVM::mainStart = mainStart;
+	ILVM::mainStop = mainStop;
+
+#pragma warning(disable:6031)
+	LThread::init(
+		[](const juce::String& str) {ILVM::errorMessage(str); },
+		[](const juce::String& str) {ILVM::normalMessage(str); },
+		[](const juce::String& id) {ILVM::on_threadStart(id); },
+		[](const juce::String& id) {ILVM::on_threadStop(id); }
+	);
+
+	LThread::set_destory(ILVM::vm->destoryId);
 
 	set_LUA_InfOChar(ILVM::lStdOut);
 	set_LUA_InfOLine(ILVM::lStdOutLine);
 	set_LUA_InfOError(ILVM::lStdOutErr);
 
 	ILLibs::reg_mesFunctions(
-		[this](juce::String& message) {this->normalMessage(message); },
-		[this](juce::String& message) {this->errorMessage(message); },
-		[this] {this->clearMessage(); }
+		[](const juce::String& message) {ILVM::vm->normalMessage(message); },
+		[](const juce::String& message) {ILVM::vm->errorMessage(message); },
+		[] {ILVM::vm->clearMessage(); }
 	);
 	ILLibs::reg_thrFunctions(
-		[this](juce::String& id) {return this->findThread(id); },
-		[this] {return this->getThreadList(); },
-		[this](juce::String& id) {return this->createThread(id); },
-		[this](juce::String& id) {return this->removeThread(id); },
-		[this](juce::String& id) {return this->threadIsRunning(id); },
-		[this](juce::String& id) {return this->destoryThread(id); },
-		[this](juce::String& id, juce::String& str) {return this->doStringOnThread(id, str); },
-		[this](juce::String& id, juce::String& str) {return this->doFileOnThread(id, str); },
-		[this] {this->flushBin(); }
+		[](const juce::String& id) {return ILVM::vm->findThread(id); },
+		[] {return ILVM::vm->getThreadList(); },
+		[](const juce::String& id) {return ILVM::vm->createThread(id); },
+		[](const juce::String& id) {return ILVM::vm->removeThread(id); },
+		[](const juce::String& id) {return ILVM::vm->threadIsRunning(id); },
+		[](const juce::String& id) {return ILVM::vm->destoryThread(id); },
+		[](const juce::String& id, const juce::String& str) {return ILVM::vm->doStringOnThread(id, str); },
+		[](const juce::String& id, const juce::String& str) {return ILVM::vm->doFileOnThread(id, str); },
+		[] {ILVM::vm->flushBin(); }
 	);
 	ILLibs::reg_shrFunctions(
-		[this](juce::String& id, juce::String& key, size_t size) {return this->newShare(id, key, size); },
-		[this](juce::String& id, juce::String& key) {return this->checkShare(id, key); },
-		[this](juce::String& id, juce::String& key) {return this->removeShare(id, key); },
-		[this](juce::String& id, juce::String& key) {return this->sizeShare(id, key); },
-		[this](juce::String& id, juce::String& key) {return this->getShare(id, key); },
-		[this](juce::String& id) {return this->clearShare(id); },
-		[this](juce::String& id) {return this->listShare(id); },
-		[this](juce::String& id) {this->lockShare(id); },
-		[this](juce::String& id) {this->unlockShare(id); }
+		[](const juce::String& id, const juce::String& key, size_t size) {return ILVM::vm->newShare(id, key, size); },
+		[](const juce::String& id, const juce::String& key) {return ILVM::vm->checkShare(id, key); },
+		[](const juce::String& id, const juce::String& key) {return ILVM::vm->removeShare(id, key); },
+		[](const juce::String& id, const juce::String& key) {return ILVM::vm->sizeShare(id, key); },
+		[](const juce::String& id, const juce::String& key) {return ILVM::vm->getShare(id, key); },
+		[](const juce::String& id) {return ILVM::vm->clearShare(id); },
+		[](const juce::String& id) {return ILVM::vm->listShare(id); },
+		[](const juce::String& id) {ILVM::vm->lockShare(id); },
+		[](const juce::String& id) {ILVM::vm->unlockShare(id); }
 	);
 
 	DMH::reg_mesFunctions(
-		[this](juce::String& message) {this->normalMessage(message); },
-		[this](juce::String& message) {this->errorMessage(message); },
-		[this] {this->clearMessage(); }
+		[](const juce::String& message) {ILVM::vm->normalMessage(message); },
+		[](const juce::String& message) {ILVM::vm->errorMessage(message); },
+		[] {ILVM::vm->clearMessage(); }
 	);
+#pragma warning(default:6031)
+}
+
+void ILVM::destory()
+{
+	ILVM::vm = nullptr;
+}
+
+ILVM::ILVM()
+{
+	
 }
 
 ILVM::~ILVM()
@@ -96,7 +136,7 @@ ILVM::~ILVM()
 	this->threads_bin.clear();
 }
 
-void ILVM::on_commandsIn(juce::String command)
+void ILVM::on_commandsIn(const juce::String& command)
 {
 	if (this->mainThread == nullptr) {
 		this->mainThread = new LThread;
@@ -111,25 +151,29 @@ void ILVM::on_commandsIn(juce::String command)
 
 		this->mainThread->setId(this->mainId);
 
-		this->normalMessage(juce::String(ILVM_COPYRIGHT));
-		this->normalMessage(juce::String(LUA_COPYRIGHT));
+		this->normalMessage(ILVM_COPYRIGHT);
+		this->normalMessage(LUA_COPYRIGHT);
 	}
 	if (!this->mainThread->doString(command)) {
 		this->errorMessage("Can't execute the command!");
 	}
 }
 
-void ILVM::on_threadStart(juce::String id)
+void ILVM::on_threadStart(const juce::String& id)
 {
-	if (id == this->mainId) {
-		this->mainStart();
+	if (id == ILVM::vm->mainId) {
+#pragma warning(disable:6031)
+		ILVM::vm->mainStart();
+#pragma warning(default:6031)
 	}
 }
 
-void ILVM::on_threadStop(juce::String id)
+void ILVM::on_threadStop(const juce::String& id)
 {
-	if (id == this->mainId) {
-		this->mainStop();
+	if (id == ILVM::vm->mainId) {
+#pragma warning(disable:6031)
+		ILVM::vm->mainStop();
+#pragma warning(default:6031)
 	}
 }
 
@@ -215,7 +259,7 @@ void ILVM::VMPushAllFunctions(LThread* thread)
 	thread->loadUtils();
 }
 
-bool ILVM::findThread(juce::String id)
+bool ILVM::findThread(const juce::String& id)
 {
 	for (auto t : this->threads) {
 		if (t->getId() == id) {
@@ -234,7 +278,7 @@ juce::StringArray ILVM::getThreadList()
 	return list;
 }
 
-bool ILVM::createThread(juce::String id)
+bool ILVM::createThread(const juce::String& id)
 {
 	if (id == this->mainId || id == this->destoryId) {
 		return false;
@@ -255,13 +299,13 @@ bool ILVM::createThread(juce::String id)
 	this->VMPushAllFunctions(thread);
 	thread->setId(id);
 
-	this->normalMessage(juce::String(ILVM_COPYRIGHT));
-	this->normalMessage(juce::String(LUA_COPYRIGHT));
+	this->normalMessage(ILVM_COPYRIGHT);
+	this->normalMessage(LUA_COPYRIGHT);
 
 	return true;
 }
 
-bool ILVM::removeThread(juce::String id)
+bool ILVM::removeThread(const juce::String& id)
 {
 	if (id == this->mainId || id == this->destoryId) {
 		return false;
@@ -282,7 +326,7 @@ bool ILVM::removeThread(juce::String id)
 	return false;
 }
 
-bool ILVM::doStringOnThread(juce::String id, juce::String str)
+bool ILVM::doStringOnThread(const juce::String& id, const juce::String& str)
 {
 	if (id == this->mainId || id == this->destoryId) {
 		return false;
@@ -295,7 +339,7 @@ bool ILVM::doStringOnThread(juce::String id, juce::String str)
 	return false;
 }
 
-bool ILVM::doFileOnThread(juce::String id, juce::String file)
+bool ILVM::doFileOnThread(const juce::String& id, const juce::String& file)
 {
 	if (id == this->mainId || id == this->destoryId) {
 		return false;
@@ -308,7 +352,7 @@ bool ILVM::doFileOnThread(juce::String id, juce::String file)
 	return false;
 }
 
-bool ILVM::threadIsRunning(juce::String id)
+bool ILVM::threadIsRunning(const juce::String& id)
 {
 	for (auto t : this->threads) {
 		if (t->getId() == id) {
@@ -318,7 +362,7 @@ bool ILVM::threadIsRunning(juce::String id)
 	return false;
 }
 
-bool ILVM::destoryThread(juce::String id)
+bool ILVM::destoryThread(const juce::String& id)
 {
 	if (id == this->mainId || id == this->destoryId) {
 		return false;
@@ -350,7 +394,7 @@ void ILVM::flushBin()
 	}
 }
 
-bool ILVM::checkShare(juce::String id, juce::String key)
+bool ILVM::checkShare(const juce::String& id, const juce::String& key)
 {
 	if (id == this->destoryId) {
 		return false;
@@ -363,7 +407,7 @@ bool ILVM::checkShare(juce::String id, juce::String key)
 	return false;
 }
 
-void* ILVM::newShare(juce::String id, juce::String key, size_t size)
+void* ILVM::newShare(const juce::String& id, const juce::String& key, size_t size)
 {
 	if (id == this->destoryId) {
 		return nullptr;
@@ -376,7 +420,7 @@ void* ILVM::newShare(juce::String id, juce::String key, size_t size)
 	return nullptr;
 }
 
-bool ILVM::removeShare(juce::String id, juce::String key)
+bool ILVM::removeShare(const juce::String& id, const juce::String& key)
 {
 	if (id == this->destoryId) {
 		return false;
@@ -389,7 +433,7 @@ bool ILVM::removeShare(juce::String id, juce::String key)
 	return false;
 }
 
-void* ILVM::getShare(juce::String id, juce::String key)
+void* ILVM::getShare(const juce::String& id, const juce::String& key)
 {
 	if (id == this->destoryId) {
 		return nullptr;
@@ -402,7 +446,7 @@ void* ILVM::getShare(juce::String id, juce::String key)
 	return nullptr;
 }
 
-size_t ILVM::sizeShare(juce::String id, juce::String key)
+size_t ILVM::sizeShare(const juce::String& id, const juce::String& key)
 {
 	if (id == this->destoryId) {
 		return 0;
@@ -415,7 +459,7 @@ size_t ILVM::sizeShare(juce::String id, juce::String key)
 	return 0;
 }
 
-bool ILVM::clearShare(juce::String id)
+bool ILVM::clearShare(const juce::String& id)
 {
 	if (id == this->destoryId) {
 		return false;
@@ -428,7 +472,7 @@ bool ILVM::clearShare(juce::String id)
 	return false;
 }
 
-juce::StringArray ILVM::listShare(juce::String id)
+juce::StringArray ILVM::listShare(const juce::String& id)
 {
 	if (id == this->destoryId) {
 		return juce::StringArray();
@@ -441,7 +485,7 @@ juce::StringArray ILVM::listShare(juce::String id)
 	return juce::StringArray();
 }
 
-void ILVM::lockShare(juce::String id)
+void ILVM::lockShare(const juce::String& id)
 {
 	if (id == this->destoryId) {
 		return;
@@ -454,7 +498,7 @@ void ILVM::lockShare(juce::String id)
 	return;
 }
 
-void ILVM::unlockShare(juce::String id)
+void ILVM::unlockShare(const juce::String& id)
 {
 	if (id == this->destoryId) {
 		return;

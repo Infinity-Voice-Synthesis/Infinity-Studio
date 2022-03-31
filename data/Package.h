@@ -25,19 +25,19 @@ public:
 	//声库
 	std::list<std::string> getLibraryAvailable();
 	std::string getLibraryDefault();
-	std::string getEngineName(std::string library);
-	std::list<std::string> getLibraryTimbre(std::string library);
-	std::string getLibraryTimbreDefault(std::string library);
-	std::string getLibraryDictionaryDefault(std::string library);
+	std::string getEngineName(const std::string& library);
+	std::list<std::string> getLibraryTimbre(const std::string& library);
+	std::string getLibraryTimbreDefault(const std::string& library);
+	std::string getLibraryDictionaryDefault(const std::string& library);
 
 	//引擎
 	std::list<std::string> getEngineAvailable();
-	std::list<Package::Param> getEngineParam(std::string engine);//ugly!
-	std::list<Package::Param> getEngineNoteParam(std::string engine);//ugly!
+	std::list<Package::Param> getEngineParam(const std::string& engine);//ugly!
+	std::list<Package::Param> getEngineNoteParam(const std::string& engine);//ugly!
 	bool getEngineSplit(std::string engine);
 
 	//字典
 	std::list<std::string> getDictionaryAvailable();
-	std::pair<std::map<std::string, int64_t>, bool> getDictionaryPhoneme(std::string dictionary, std::string name);
+	std::pair<std::map<std::string, int64_t>, bool> getDictionaryPhoneme(const std::string& dictionary, const std::string& name);
 };
 

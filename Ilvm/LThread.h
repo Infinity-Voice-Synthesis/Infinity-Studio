@@ -1,8 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
-
 #include "Lua/lua.hpp"
-
 #include "llibs/ILLibs.h"
 
 class LThread : public juce::Thread
@@ -12,43 +10,47 @@ public:
 	~LThread();
 
 	static void init(
-		std::function<void(juce::String)> errorMessage,
-		std::function<void(juce::String)> normalMessage,
-		std::function<void(juce::String)> tStarted,
-		std::function<void(juce::String)> tEnded
+		std::function<void(const juce::String&)> errorMessage,
+		std::function<void(const juce::String&)> normalMessage,
+		std::function<void(const juce::String&)> tStarted,
+		std::function<void(const juce::String&)> tEnded
 	);
 
-	bool doFile(juce::String name);
-	bool doString(juce::String str);
+	static void set_destory(const juce::String& destoryId);
 
-	bool setId(juce::String id);
-	juce::String getId();
+	bool doFile(const juce::String& name);
+	bool doString(const juce::String& str);
 
-	bool destory(juce::String id);
+	bool setId(const juce::String& id);
+	const juce::String& getId();
+
+	bool destory(const juce::String& id);
 
 	void beginGlobalTable();
-	void endGlobalTable(juce::String name);
+	void endGlobalTable(const juce::String& name);
 
-	void beginTable(juce::String name);
+	void beginTable(const juce::String& name);
 	void endTable();
 
-	void addFunction(juce::String name, lua_CFunction function);
+	void addFunction(const juce::String& name, lua_CFunction function);
 
 	void loadUtils();
 
-	static void set_destory(juce::String destoryId);
-
-	bool checkShare(juce::String key);
-	void* newShare(juce::String key, size_t size);
-	bool removeShare(juce::String key);
-	void* getShare(juce::String key);
-	size_t sizeShare(juce::String key);
+	bool checkShare(const juce::String& key);
+	void* newShare(const juce::String& key, size_t size);
+	bool removeShare(const juce::String& key);
+	void* getShare(const juce::String& key);
+	size_t sizeShare(const juce::String& key);
 	bool clearShare();
 	juce::StringArray listShare();
 	void lockShare();
 	void unlockShare();
 
 private:
+	static juce::String destoryId;
+
+	static void hookFunction(lua_State* L, lua_Debug* ar);
+
 	lua_State* lstate = nullptr;
 
 	juce::String lFileName;
@@ -64,21 +66,17 @@ private:
 
 	std::queue<juce::String> strList;
 
-	static juce::String destoryId;
-
-	static void hookFunction(lua_State* L, lua_Debug* ar);
-
 	juce::HashMap<juce::String, std::pair<size_t, void*>> shareData;
 	std::mutex shareMutex;
 
 	void run()override;
 
 private:
-	static std::function<void(juce::String)> errorMessage;
-	static std::function<void(juce::String)> normalMessage;
+	static std::function<void(const juce::String&)> errorMessage;
+	static std::function<void(const juce::String&)> normalMessage;
 
-	static std::function<void(juce::String)> tStarted;
-	static std::function<void(juce::String)> tEnded;
+	static std::function<void(const juce::String&)> tStarted;
+	static std::function<void(const juce::String&)> tEnded;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LThread)
 };

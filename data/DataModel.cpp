@@ -1,4 +1,5 @@
 ﻿#include "DataModel.h"
+#include "Package.h"
 
 DataModel DataModel::_model;
 
@@ -203,7 +204,7 @@ uint32_t DataModel::getProjectQuantize()
 	return quantize;
 }
 
-void DataModel::setProjectEditor(std::string editor)
+void DataModel::setProjectEditor(const std::string& editor)
 {
 	if (!editor.empty()) {
 		this->modelMutex.lock();
@@ -220,7 +221,7 @@ std::string DataModel::getProjectEditor()
 	return editor;
 }
 
-void DataModel::addProjectAuthor(std::string author)
+void DataModel::addProjectAuthor(const std::string& author)
 {
 	if (!author.empty()) {
 		this->modelMutex.lock();
@@ -243,7 +244,7 @@ std::list<std::string> DataModel::getProjectAuthors()
 	return result;
 }
 
-void DataModel::addTrack(std::string name, std::string color)
+void DataModel::addTrack(const std::string& name, const std::string& color)
 {
 	if (name.empty()) {
 		return;
@@ -318,7 +319,7 @@ int DataModel::countTrack()
 	return tracks_size;
 }
 
-void DataModel::setTrackName(int trackIndex, std::string name)
+void DataModel::setTrackName(int trackIndex, const std::string& name)
 {
 	if (name.empty()) {
 		return;
@@ -345,7 +346,7 @@ std::string DataModel::getTrackName(int trackIndex)
 	return std::string();
 }
 
-void DataModel::setTrackColor(int trackIndex, std::string color)
+void DataModel::setTrackColor(int trackIndex, const std::string& color)
 {
 	if (color.empty()) {
 		return;
@@ -572,7 +573,7 @@ double DataModel::getTrackMix(int trackIndex)
 	return 0;
 }
 
-void DataModel::addContainer(int trackIndex, uint32_t startBeat, uint32_t startTick, uint64_t length, std::string pattern)
+void DataModel::addContainer(int trackIndex, uint32_t startBeat, uint32_t startTick, uint64_t length, const std::string& pattern)
 {
 	if (pattern.empty()) {
 		return;
@@ -819,7 +820,7 @@ uint64_t DataModel::getContainerLength(int trackIndex, int containerIndex)
 	return 0;
 }
 
-void DataModel::setContainerPattern(int trackIndex, int containerIndex, std::string pattern)
+void DataModel::setContainerPattern(int trackIndex, int containerIndex, const std::string& pattern)
 {
 	if (pattern.empty()) {
 		return;
@@ -869,7 +870,7 @@ std::string DataModel::getContainerPattern(int trackIndex, int containerIndex)
 	return std::string();
 }
 
-void DataModel::addPattern(std::string name)
+void DataModel::addPattern(const std::string& name)
 {
 	if (name.empty()) {
 		return;
@@ -929,7 +930,7 @@ int DataModel::countPattern()
 	return patterns_size;
 }
 
-void DataModel::setPatternName(int patternIndex, std::string name)
+void DataModel::setPatternName(int patternIndex, const std::string& name)
 {
 	if (name.empty()) {
 		return;
@@ -981,7 +982,7 @@ std::string DataModel::getPatternName(int patternIndex)
 	return std::string();
 }
 
-void DataModel::setPatternFile(int patternIndex, std::string file, uint64_t deviation)
+void DataModel::setPatternFile(int patternIndex, const std::string& file, uint64_t deviation)
 {
 	if (file.empty()) {
 		return;
@@ -1096,7 +1097,7 @@ uint64_t DataModel::getPatternDeviation(int patternIndex)
 	return 0;
 }
 
-void DataModel::setPatternLibrary(int patternIndex, std::string library)
+void DataModel::setPatternLibrary(int patternIndex, const std::string& library)
 {
 	if (library.empty()) {
 		return;
@@ -1283,7 +1284,7 @@ std::string DataModel::getPatternLibrary(int patternIndex)
 	return std::string();
 }
 
-void DataModel::setPatternDictionary(int patternIndex, std::string dictionary)
+void DataModel::setPatternDictionary(int patternIndex, const std::string& dictionary)
 {
 	if (dictionary.empty()) {
 		return;
@@ -1377,7 +1378,7 @@ std::string DataModel::getPatternDictionary(int patternIndex)
 }
 
 
-void DataModel::setPatternTimbreA(int patternIndex, std::string timbre)
+void DataModel::setPatternTimbreA(int patternIndex, const std::string& timbre)
 {
 	if (timbre.empty()) {
 		return;
@@ -1436,7 +1437,7 @@ std::string DataModel::getPatternTimbreA(int patternIndex)
 	return std::string();
 }
 
-void DataModel::setPatternTimbreB(int patternIndex, std::string timbre)
+void DataModel::setPatternTimbreB(int patternIndex, const std::string& timbre)
 {
 	if (timbre.empty()) {
 		return;
@@ -1487,7 +1488,7 @@ std::string DataModel::getPatternTimbreB(int patternIndex)
 	return std::string();
 }
 
-void DataModel::addNote(int patternIndex, uint32_t startBeat, uint32_t startTick, uint64_t length, uint32_t pitch, std::string name)
+void DataModel::addNote(int patternIndex, uint32_t startBeat, uint32_t startTick, uint64_t length, uint32_t pitch, const std::string& name)
 {
 	if (length == 0) {
 		return;
@@ -1913,7 +1914,7 @@ uint32_t DataModel::getNotePitch(int patternIndex, int noteIndex)
 	return 0;
 }
 
-void DataModel::setNoteName(int patternIndex, int noteIndex, std::string name)
+void DataModel::setNoteName(int patternIndex, int noteIndex, const std::string& name)
 {
 	if (name.empty()) {
 		return;
@@ -2012,7 +2013,7 @@ std::string DataModel::getNoteName(int patternIndex, int noteIndex)
 	return std::string();
 }
 
-void DataModel::setNoteTimbre(int patternIndex, int noteIndex, std::string timbre)
+void DataModel::setNoteTimbre(int patternIndex, int noteIndex, const std::string& timbre)
 {
 	if (timbre.empty()) {
 		return;
@@ -2072,7 +2073,7 @@ std::string DataModel::getNoteTimbre(int patternIndex, int noteIndex)
 	return std::string();
 }
 
-void DataModel::setNotePhonemes(int patternIndex, int noteIndex, std::vector<int64_t>& phonemes)
+void DataModel::setNotePhonemes(int patternIndex, int noteIndex, const std::vector<int64_t>& phonemes)
 {
 	if (phonemes.empty()) {
 		return;
@@ -2167,7 +2168,7 @@ std::vector<std::pair<std::string, int64_t>> DataModel::getNotePhonemes(int patt
 	return std::vector<std::pair<std::string, int64_t>>();
 }
 
-void DataModel::setNoteFlags(int patternIndex, int noteIndex, std::string flags)
+void DataModel::setNoteFlags(int patternIndex, int noteIndex, const std::string& flags)
 {
 	this->modelMutex.lock();
 	if (patternIndex >= 0 && patternIndex < this->project->patterns_size()) {
@@ -2420,7 +2421,7 @@ double DataModel::getParamDefault(int patternIndex, int paramIndex)
 	return 0;
 }
 
-void DataModel::setParamColor(int patternIndex, int paramIndex, std::string color)
+void DataModel::setParamColor(int patternIndex, int paramIndex, const std::string& color)
 {
 	if (color.empty()) {
 		return;

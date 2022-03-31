@@ -1,13 +1,13 @@
 ﻿#include "DMH.h"
 #include "data/DataModel.h"
 
-std::function<void(juce::String&)> DMH::console_mesFunction;
-std::function<void(juce::String&)> DMH::console_assFunction;
+std::function<void(const juce::String&)> DMH::console_mesFunction;
+std::function<void(const juce::String&)> DMH::console_assFunction;
 std::function<void()> DMH::console_clsFunction;
 
 void DMH::reg_mesFunctions(
-	std::function<void(juce::String&)> console_mesFunction,
-	std::function<void(juce::String&)> console_assFunction,
+	std::function<void(const juce::String&)> console_mesFunction,
+	std::function<void(const juce::String&)> console_assFunction,
 	std::function<void()> console_clsFunction
 )
 {

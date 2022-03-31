@@ -5,14 +5,14 @@
 
 class DMH final
 {
-	static std::function<void(juce::String&)> console_mesFunction;
-	static std::function<void(juce::String&)> console_assFunction;
+	static std::function<void(const juce::String&)> console_mesFunction;
+	static std::function<void(const juce::String&)> console_assFunction;
 	static std::function<void()> console_clsFunction;
 
 public:
 	static void reg_mesFunctions(
-		std::function<void(juce::String&)> console_mesFunction,
-		std::function<void(juce::String&)> console_assFunction,
+		std::function<void(const juce::String&)> console_mesFunction,
+		std::function<void(const juce::String&)> console_assFunction,
 		std::function<void()> cconsole_lsFunction
 	);
 

@@ -7,17 +7,17 @@ extern "C" {
 
 juce::String LThread::destoryId;
 
-std::function<void(juce::String)> LThread::errorMessage;
-std::function<void(juce::String)> LThread::normalMessage;
+std::function<void(const juce::String&)> LThread::errorMessage;
+std::function<void(const juce::String&)> LThread::normalMessage;
 
-std::function<void(juce::String)> LThread::tStarted;
-std::function<void(juce::String)> LThread::tEnded;
+std::function<void(const juce::String&)> LThread::tStarted;
+std::function<void(const juce::String&)> LThread::tEnded;
 
 void LThread::init(
-	std::function<void(juce::String)> errorMessage,
-	std::function<void(juce::String)> normalMessage,
-	std::function<void(juce::String)> tStarted,
-	std::function<void(juce::String)> tEnded
+	std::function<void(const juce::String&)> errorMessage,
+	std::function<void(const juce::String&)> normalMessage,
+	std::function<void(const juce::String&)> tStarted,
+	std::function<void(const juce::String&)> tEnded
 )
 {
 	LThread::errorMessage = errorMessage;
@@ -26,7 +26,7 @@ void LThread::init(
 	LThread::tEnded = tEnded;
 }
 
-void LThread::set_destory(juce::String destoryId)
+void LThread::set_destory(const juce::String& destoryId)
 {
 	LThread::destoryId = destoryId;
 }
@@ -102,7 +102,7 @@ void LThread::run()
 	this->tEnded(this->Id);
 }
 
-bool LThread::doFile(juce::String name)
+bool LThread::doFile(const juce::String& name)
 {
 	if (!this->Id.isEmpty()) {
 		if (!this->isThreadRunning()) {
@@ -115,7 +115,7 @@ bool LThread::doFile(juce::String name)
 	return false;
 }
 
-bool LThread::doString(juce::String str)
+bool LThread::doString(const juce::String& str)
 {
 	if (!this->Id.isEmpty()) {
 		this->tType = LType::DoString;
@@ -131,7 +131,7 @@ bool LThread::doString(juce::String str)
 	return false;
 }
 
-bool LThread::setId(juce::String id)
+bool LThread::setId(const juce::String& id)
 {
 	if (!id.isEmpty()) {
 		if (this->Id.isEmpty()) {
@@ -142,7 +142,7 @@ bool LThread::setId(juce::String id)
 	return false;
 }
 
-juce::String LThread::getId()
+const juce::String& LThread::getId()
 {
 	return this->Id;
 }
@@ -152,12 +152,12 @@ void LThread::beginGlobalTable()
 	lua_newtable(this->lstate);
 }
 
-void LThread::endGlobalTable(juce::String name)
+void LThread::endGlobalTable(const juce::String& name)
 {
 	lua_setglobal(this->lstate, name.toStdString().c_str());
 }
 
-void LThread::beginTable(juce::String name)
+void LThread::beginTable(const juce::String& name)
 {
 	lua_pushstring(this->lstate, name.toStdString().c_str());
 	lua_newtable(this->lstate);
@@ -168,7 +168,7 @@ void LThread::endTable()
 	lua_settable(this->lstate, -3);
 }
 
-void LThread::addFunction(juce::String name, lua_CFunction function)
+void LThread::addFunction(const juce::String& name, lua_CFunction function)
 {
 	lua_pushstring(this->lstate, name.toStdString().c_str());
 	lua_pushcfunction(this->lstate, function);
@@ -192,7 +192,7 @@ void LThread::loadUtils()
 	}
 }
 
-bool LThread::destory(juce::String id)
+bool LThread::destory(const juce::String& id)
 {
 	if (this->isThreadRunning()) {
 		this->idMutex.enterWrite();
@@ -204,7 +204,7 @@ bool LThread::destory(juce::String id)
 	return false;
 }
 
-bool LThread::checkShare(juce::String key)
+bool LThread::checkShare(const juce::String& key)
 {
 	this->shareMutex.lock();
 	bool result = this->shareData.contains(key);
@@ -212,7 +212,7 @@ bool LThread::checkShare(juce::String key)
 	return result;
 }
 
-void* LThread::newShare(juce::String key, size_t size)
+void* LThread::newShare(const juce::String& key, size_t size)
 {
 	if (checkShare(key)) {
 		return nullptr;
@@ -224,7 +224,7 @@ void* LThread::newShare(juce::String key, size_t size)
 	return result;
 }
 
-bool LThread::removeShare(juce::String key)
+bool LThread::removeShare(const juce::String& key)
 {
 	if (!checkShare(key)) {
 		return false;
@@ -236,7 +236,7 @@ bool LThread::removeShare(juce::String key)
 	return true;
 }
 
-void* LThread::getShare(juce::String key)
+void* LThread::getShare(const juce::String& key)
 {
 	if (!checkShare(key)) {
 		return nullptr;
@@ -247,7 +247,7 @@ void* LThread::getShare(juce::String key)
 	return result;
 }
 
-size_t LThread::sizeShare(juce::String key)
+size_t LThread::sizeShare(const juce::String& key)
 {
 	if (!checkShare(key)) {
 		return 0;
@@ -275,7 +275,7 @@ juce::StringArray LThread::listShare()
 {
 	this->shareMutex.lock();
 	juce::StringArray result;
-	for (auto it = this->shareData.begin(); it != this->shareData.end(); it++) {
+	for (auto it = this->shareData.begin(); it != this->shareData.end(); it.next()) {
 		result.add(it.getKey());
 	}
 	this->shareMutex.unlock();
@@ -289,5 +289,7 @@ void LThread::lockShare()
 
 void LThread::unlockShare()
 {
+#pragma warning(disable:26110)
 	this->shareMutex.unlock();
+#pragma warning(default:26110)
 }

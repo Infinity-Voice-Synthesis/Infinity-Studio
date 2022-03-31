@@ -2,16 +2,23 @@
 
 #include <JuceHeader.h>
 #include "LThread.h"
-#include "llibs/ILLibs.h"
-#include "llibs/DMH.h"
 
-#define ILVM_COPYRIGHT "Infinity Studio Script Interpreter 1.0.0" "  Copyright (C) 2019-2022 Infinity Synthesis Team"
+constexpr auto ILVM_COPYRIGHT = "Infinity Studio Script Interpreter 1.0.0" "  Copyright (C) 2019-2022 Infinity Synthesis Team";
 
 class ILVM final
 {
 public:
 	ILVM();
 	~ILVM();
+
+	static void init(
+		std::function<void(const juce::String&)> errorMessage,
+		std::function<void(const juce::String&)> normalMessage,
+		std::function<void(void)> clearMessage,
+		std::function<void(void)> mainStart,
+		std::function<void(void)> mainStop
+	);
+	static void destory();
 
 private:
 	static std::unique_ptr<ILVM> vm;
@@ -20,8 +27,8 @@ private:
 	std::vector<LThread*> threads_bin;
 	LThread* mainThread = nullptr;
 
-	const juce::String mainId = "_main";
-	const juce::String destoryId = "_destory";
+	const juce::String mainId = "lua_main";
+	const juce::String destoryId = "lua_destory";
 
 	static juce::String outStrTemp;
 
@@ -37,40 +44,39 @@ private:
 public:
 	void mainCritical();
 
-	bool findThread(juce::String id);
+	bool findThread(const juce::String& id);
 	juce::StringArray getThreadList();
-	bool createThread(juce::String id);
-	bool removeThread(juce::String id);
+	bool createThread(const juce::String& id);
+	bool removeThread(const juce::String& id);
 
-	bool destoryThread(juce::String id);
+	bool destoryThread(const juce::String& id);
 
-	bool doStringOnThread(juce::String id, juce::String str);
-	bool doFileOnThread(juce::String id, juce::String file);
+	bool doStringOnThread(const juce::String& id, const juce::String& str);
+	bool doFileOnThread(const juce::String& id, const juce::String& file);
 
-	bool threadIsRunning(juce::String id);
+	bool threadIsRunning(const juce::String& id);
 
 	void flushBin();
 
-	bool checkShare(juce::String id, juce::String key);
-	void* newShare(juce::String id, juce::String key, size_t size);
-	bool removeShare(juce::String id, juce::String key);
-	void* getShare(juce::String id, juce::String key);
-	size_t sizeShare(juce::String id, juce::String key);
-	bool clearShare(juce::String id);
-	juce::StringArray listShare(juce::String id);
-	void lockShare(juce::String id);
-	void unlockShare(juce::String id);
+	bool checkShare(const juce::String& id, const juce::String& key);
+	void* newShare(const juce::String& id, const juce::String& key, size_t size);
+	bool removeShare(const juce::String& id, const juce::String& key);
+	void* getShare(const juce::String& id, const juce::String& key);
+	size_t sizeShare(const juce::String& id, const juce::String& key);
+	bool clearShare(const juce::String& id);
+	juce::StringArray listShare(const juce::String& id);
+	void lockShare(const juce::String& id);
+	void unlockShare(const juce::String& id);
 
 public:
-	void on_commandsIn(juce::String command);
+	void on_commandsIn(const juce::String& command);
 
-private:
-	void on_threadStart(juce::String id);
-	void on_threadStop(juce::String id);
+public:
+	static void on_threadStart(const juce::String& id);
+	static void on_threadStop(const juce::String& id);
 
-private:
-	static std::function<void(juce::String)> errorMessage;
-	static std::function<void(juce::String)> normalMessage;
+	static std::function<void(const juce::String&)> errorMessage;
+	static std::function<void(const juce::String&)> normalMessage;
 	static std::function<void(void)> clearMessage;
 
 	static std::function<void(void)> mainStart;
