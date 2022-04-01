@@ -1,85 +1,30 @@
 #include "ToolBarFactory.h"
-#include "utils/Config.h"
-#include "utils/Source.h"
 #include "menus/utils/MenuManager.h"
 
 ToolBarFactory::ToolBarFactory()
+    :ToolBarFactoryBase()
 {
-
+    auto makeItem = [](const juce::String& id)->const Item {return { .type = Item::Type::Normal, .id = id, .stateGetter = [id]() {return MenuManager::isActived(id); },.callBack = [id] {MenuManager::actived(id); } }; };
+    this->toolBarItems = {
+        makeItem("MM_Explore_Mode"),
+        makeItem("MM_Edit_Mode"),
+        {.type = Item::Type::Spacer,.id = ""},
+        makeItem("MM_Track_View"),
+        makeItem("MM_Note_View"),
+        makeItem("MM_Parameter_View"),
+        {.type = Item::Type::Spacer,.id = ""},
+        makeItem("MM_Show_Notes"),
+        makeItem("MM_Show_Notes_and_Wave"),
+        makeItem("MM_Show_Notes_and_Pitch_Line"),
+        {.type = Item::Type::FlexibleSpacer,.id = ""},
+        makeItem("MM_Follow_the_Pointer"),
+        makeItem("MM_Loop"),
+        makeItem("MM_Play_or_Stop"),
+        {.type = Item::Type::Spacer,.id = ""}
+    };
 }
 
 ToolBarFactory::~ToolBarFactory()
 {
 
-}
-
-void ToolBarFactory::getAllToolbarItemIds(juce::Array<int>& ids)
-{
-	for (int i = 0; i < this->toolBarItems.size(); i++) {
-		Item& item = this->toolBarItems[i];
-		switch (item.type)
-		{
-		case Item::Type::Normal:
-		{
-			ids.add(i + 1);
-			break;
-		}
-		case Item::Type::Separator:
-		{
-			ids.add(juce::ToolbarItemFactory::SpecialItemIds::separatorBarId);
-			break;
-		}
-		case Item::Type::Spacer:
-		{
-			ids.add(juce::ToolbarItemFactory::SpecialItemIds::spacerId);
-			break;
-		}
-		case Item::Type::FlexibleSpacer:
-		{
-			ids.add(juce::ToolbarItemFactory::SpecialItemIds::flexibleSpacerId);
-			break;
-		}
-		}
-	}
-}
-
-void ToolBarFactory::getDefaultItemSet(juce::Array<int>& ids)
-{
-	this->getAllToolbarItemIds(ids);
-}
-
-juce::ToolbarItemComponent* ToolBarFactory::createItem(int itemId)
-{
-	Item& item = this->toolBarItems[static_cast<long long>(itemId) - 1];
-	juce::ToolbarButton* button = new juce::ToolbarButton(
-		itemId,
-		Config::tr(item.id),
-		std::move(std::unique_ptr<juce::Drawable>(Source::makeImage(Config::tsFull(item.id, "icon-normal")))),
-		std::move(std::unique_ptr<juce::Drawable>(Source::makeImage(Config::tsFull(item.id, "icon-checked"))))
-	);
-	button->setToggleable(true);
-	button->setToggleState(MenuManager::isActived(item.id), juce::NotificationType::dontSendNotification);
-
-	bool topConnect = (((static_cast<long long>(itemId) - 1) - 1) >= 0) &&
-		(this->toolBarItems[static_cast<long long>(itemId) - 1 - 1].type == Item::Type::Normal);
-	bool bottomConnect = (((static_cast<long long>(itemId) - 1) + 1) < static_cast<long long>(this->toolBarItems.size())) &&
-		(this->toolBarItems[static_cast<long long>(itemId) - 1 + 1].type == Item::Type::Normal);
-	button->setConnectedEdges(
-		(topConnect ? juce::Button::ConnectedEdgeFlags::ConnectedOnTop : 0) |
-		(bottomConnect ? juce::Button::ConnectedEdgeFlags::ConnectedOnBottom : 0)
-	);
-
-	button->onClick = [item] {MenuManager::actived(item.id); };
-	return button;
-}
-
-int ToolBarFactory::getItemIndex(const juce::String& id)
-{
-	for (int i = 0; i < this->toolBarItems.size(); i++) {
-		Item& item = this->toolBarItems[i];
-		if (item.id == id) {
-			return i;
-		}
-	}
-	return -1;
 }

@@ -54,13 +54,6 @@ void ILVM::init(
 	ILVM::mainStop = mainStop;
 
 #pragma warning(disable:6031)
-	LThread::init(
-		[](const juce::String& str) {ILVM::errorMessage(str); },
-		[](const juce::String& str) {ILVM::normalMessage(str); },
-		[](const juce::String& id) {ILVM::on_threadStart(id); },
-		[](const juce::String& id) {ILVM::on_threadStop(id); }
-	);
-
 	LThread::set_destory(ILVM::vm->destoryId);
 
 	set_LUA_InfOChar(ILVM::lStdOut);
@@ -118,6 +111,7 @@ ILVM::~ILVM()
 	this->mainThread = nullptr;
 
 	for (auto thread : this->threads) {
+		thread->disconnect();
 		if (thread->isThreadRunning()) {
 			thread->stopThread(0);
 			thread->waitForThreadToExit(-1);
@@ -153,6 +147,13 @@ void ILVM::on_commandsIn(const juce::String& command)
 
 		this->normalMessage(ILVM_COPYRIGHT);
 		this->normalMessage(LUA_COPYRIGHT);
+
+		this->mainThread->connect(
+			[](const juce::String& str) {ILVM::errorMessage(str); },
+			[](const juce::String& str) {ILVM::normalMessage(str); },
+			[](const juce::String& id) {ILVM::on_threadStart(id); },
+			[](const juce::String& id) {ILVM::on_threadStop(id); }
+		);
 	}
 	if (!this->mainThread->doString(command)) {
 		this->errorMessage("Can't execute the command!");
@@ -183,6 +184,7 @@ void ILVM::mainCritical()
 		LThread* thread = this->threads.at(i);
 		if (thread->getId() == this->mainId) {
 			if (thread->isThreadRunning()) {
+				thread->disconnect();
 				this->mainThread = nullptr;
 
 				this->threads.erase(this->threads.begin() + i);
@@ -302,6 +304,13 @@ bool ILVM::createThread(const juce::String& id)
 	this->normalMessage(ILVM_COPYRIGHT);
 	this->normalMessage(LUA_COPYRIGHT);
 
+	thread->connect(
+		[](const juce::String& str) {ILVM::errorMessage(str); },
+		[](const juce::String& str) {ILVM::normalMessage(str); },
+		[](const juce::String& id) {ILVM::on_threadStart(id); },
+		[](const juce::String& id) {ILVM::on_threadStop(id); }
+	);
+
 	return true;
 }
 
@@ -316,6 +325,8 @@ bool ILVM::removeThread(const juce::String& id)
 			if (t->isThreadRunning()) {
 				return false;
 			}
+
+			t->disconnect();
 
 			delete t;
 			this->threads.erase(this->threads.begin() + i);
@@ -371,6 +382,7 @@ bool ILVM::destoryThread(const juce::String& id)
 		LThread* t = this->threads.at(i);
 		if (t->getId() == id) {
 			if (t->isThreadRunning()) {
+				t->disconnect();
 				this->threads.erase(this->threads.begin() + i);
 				this->threads_bin.push_back(t);
 

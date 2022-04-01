@@ -27,13 +27,14 @@ void StatusBar::init()
 	Utils::getISG().insert("SB_Console", [](const juce::String& id)->juce::DrawableImage* {return Source::makeImage(Config::tsFull("SB_Console", "icon-normal")); });
 	Utils::getISG().insert("SB_VirtualMachineError", [](const juce::String& id)->juce::DrawableImage* {return Source::makeImage(Config::tsFull("SB_VirtualMachineError", "icon-normal")); });
 
-	CallBackManager::set<void(void)>(
-		"lambda_StatusBar_VMStart_void",
-		[&VMIsRunning, this]() {VMIsRunning = true; this->refreshItemText("SB_VirtualMachineState"); }
-	);
-	CallBackManager::set<void(void)>(
-		"lambda_StatusBar_VMStop_void",
-		[&VMIsRunning, this]() {VMIsRunning = true; this->refreshItemText("SB_VirtualMachineState"); }
+	CallBackManager::set<void(bool&)>(
+		"lambda_StatusBar_VMRunning_bool&",
+		[&VMIsRunning](bool& isRunning) {isRunning = VMIsRunning; }
+		);
+
+	CallBackManager::set<void(bool)>(
+		"lambda_StatusBar_VMStartStop_bool",
+		[&VMIsRunning, this](bool startStop) {VMIsRunning = startStop; this->refreshItemText("SB_VirtualMachineState"); }
 	);
 
 	this->setVertical(false);

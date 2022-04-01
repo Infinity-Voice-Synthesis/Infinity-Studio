@@ -36,8 +36,8 @@ public:
             [](const juce::String& str) {CallBackManager::call<void(const juce::String&)>("lambda_ConsoleWidget_ErrorMessage_const_juce::String&", str); },
             [](const juce::String& str) {CallBackManager::call<void(const juce::String&)>("lambda_ConsoleWidget_NormalMessage_const_juce::String&", str); },
             [] {CallBackManager::call<void(void)>("lambda_ConsoleWidget_ClearMessage_void"); },
-            [] {CallBackManager::call<void(void)>("lambda_StatusBar_VMStart_void"); },
-            [] {CallBackManager::call<void(void)>("lambda_StatusBar_VMStop_void"); }
+            [] {CallBackManager::call<void(bool)>("lambda_StatusBar_VMStartStop_bool", true); },
+            [] {CallBackManager::call<void(bool)>("lambda_StatusBar_VMStartStop_bool", false); }
         );//初始化Lua虚拟机
 
         //-------------------------前后端分界-----------------------------//

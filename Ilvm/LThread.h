@@ -9,12 +9,13 @@ public:
 	LThread();
 	~LThread();
 
-	static void init(
+	void connect(
 		std::function<void(const juce::String&)> errorMessage,
 		std::function<void(const juce::String&)> normalMessage,
 		std::function<void(const juce::String&)> tStarted,
 		std::function<void(const juce::String&)> tEnded
 	);
+	void disconnect();
 
 	static void set_destory(const juce::String& destoryId);
 
@@ -72,11 +73,11 @@ private:
 	void run()override;
 
 private:
-	static std::function<void(const juce::String&)> errorMessage;
-	static std::function<void(const juce::String&)> normalMessage;
+	std::function<void(const juce::String&)> errorMessage;
+	std::function<void(const juce::String&)> normalMessage;
 
-	static std::function<void(const juce::String&)> tStarted;
-	static std::function<void(const juce::String&)> tEnded;
+	std::function<void(const juce::String&)> tStarted;
+	std::function<void(const juce::String&)> tEnded;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LThread)
 };

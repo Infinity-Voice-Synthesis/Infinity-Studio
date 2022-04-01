@@ -7,23 +7,25 @@ extern "C" {
 
 juce::String LThread::destoryId;
 
-std::function<void(const juce::String&)> LThread::errorMessage;
-std::function<void(const juce::String&)> LThread::normalMessage;
-
-std::function<void(const juce::String&)> LThread::tStarted;
-std::function<void(const juce::String&)> LThread::tEnded;
-
-void LThread::init(
+void LThread::connect(
 	std::function<void(const juce::String&)> errorMessage,
 	std::function<void(const juce::String&)> normalMessage,
 	std::function<void(const juce::String&)> tStarted,
 	std::function<void(const juce::String&)> tEnded
 )
 {
-	LThread::errorMessage = errorMessage;
-	LThread::normalMessage = normalMessage;
-	LThread::tStarted = tStarted;
-	LThread::tEnded = tEnded;
+	this->errorMessage = errorMessage;
+	this->normalMessage = normalMessage;
+	this->tStarted = tStarted;
+	this->tEnded = tEnded;
+}
+
+void LThread::disconnect()
+{
+	this->errorMessage = [](const juce::String&){};
+	this->normalMessage = [](const juce::String&) {};
+	this->tStarted = [](const juce::String&) {};
+	this->tEnded = [](const juce::String&) {};
 }
 
 void LThread::set_destory(const juce::String& destoryId)

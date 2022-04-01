@@ -140,6 +140,9 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="uiModels\ToolBarFactoryBase.cpp" />
+    <ClCompile Include="uiModels\ConsoleToolBarFactory.cpp" />
+    <ClCompile Include="widgets\ConsoleWidget.cpp" />
     <ClCompile Include="data\DataModel.cpp" />
     <ClCompile Include="data\Package.cpp" />
     <ClCompile Include="Ilvm\ILVM.cpp" />
@@ -307,6 +310,9 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="uiModels\ToolBarFactoryBase.h" />
+    <ClInclude Include="uiModels\ConsoleToolBarFactory.h" />
+    <ClInclude Include="widgets\ConsoleWidget.h" />
     <ClInclude Include="data\DataModel.h" />
     <ClInclude Include="data\Package.h" />
     <ClInclude Include="Ilvm\ILVM.h" />
