@@ -15,4 +15,5 @@ public:
 	static double editorVScoller_width;
 	static double editorHScoller_height;
 	static double editorRuler_height;
+	static double consoleToolBar_width;
 };

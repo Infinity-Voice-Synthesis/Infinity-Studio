@@ -140,6 +140,7 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="widgets\ConsoleToolBar.cpp" />
     <ClCompile Include="uiModels\ToolBarFactoryBase.cpp" />
     <ClCompile Include="uiModels\ConsoleToolBarFactory.cpp" />
     <ClCompile Include="widgets\ConsoleWidget.cpp" />
@@ -310,6 +311,7 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="widgets\ConsoleToolBar.h" />
     <ClInclude Include="uiModels\ToolBarFactoryBase.h" />
     <ClInclude Include="uiModels\ConsoleToolBarFactory.h" />
     <ClInclude Include="widgets\ConsoleWidget.h" />

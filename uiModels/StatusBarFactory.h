@@ -34,14 +34,7 @@ public:
         static ItemIconFunction iconFunc;
     };
 private:
-
-    std::vector<Item> statusBarItems = {
-        {.type = Item::Type::Normal,.id = "SB_Console",.showType = StatusBarButton::ShowType::Icon},
-        {.type = Item::Type::Normal,.id = "SB_VirtualMachineState",.showType = StatusBarButton::ShowType::Text},
-        {.type = Item::Type::Normal,.id = "SB_VirtualMachineError",.showType = StatusBarButton::ShowType::IconAndText},
-        {.type = Item::Type::FlexibleSpacer},
-        {.type = Item::Type::Normal,.id = "SB_Pattern",.showType = StatusBarButton::ShowType::Text}
-    };
+    std::vector<Item> statusBarItems;
 
     const std::unique_ptr<Item> _empty = std::make_unique<Item>();
 

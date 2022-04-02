@@ -2,6 +2,7 @@
 #include "utils/Config.h"
 #include "utils/Source.h"
 #include "utils/Utils.h"
+#include "utils/CallBackManager.h"
 
 StatusBarFactory::Item::ItemTextFunction StatusBarFactory::Item::textFunc
 = [](const juce::String& id)->juce::String {return Utils::getTSG().get(id); };
@@ -11,7 +12,16 @@ StatusBarFactory::Item::ItemIconFunction StatusBarFactory::Item::iconFunc
 StatusBarFactory::StatusBarFactory() :
 	ToolbarItemFactory()
 {
-
+	this->statusBarItems = {
+		{.type = Item::Type::Normal,.id = "SB_Console",.showType = StatusBarButton::ShowType::Icon,
+		.activeFunc = [](const juce::String&) {CallBackManager::call<void(void)>("lambda_CentralWidget_ConsoleChange_void"); }},
+		{.type = Item::Type::Normal,.id = "SB_VirtualMachineState",.showType = StatusBarButton::ShowType::Text,
+		.activeFunc = [](const juce::String&) {CallBackManager::call<void(void)>("lambda_CentralWidget_VMStateChange_void"); }},
+		{.type = Item::Type::Normal,.id = "SB_VirtualMachineError",.showType = StatusBarButton::ShowType::Text,
+		.activeFunc = [](const juce::String&) {CallBackManager::call<void(void)>("lambda_CentralWidget_VMErrorShow_void"); }},
+		{.type = Item::Type::FlexibleSpacer},
+		{.type = Item::Type::Normal,.id = "SB_Pattern",.showType = StatusBarButton::ShowType::Text}
+	};
 }
 
 StatusBarFactory::~StatusBarFactory()

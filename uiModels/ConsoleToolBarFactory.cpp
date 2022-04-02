@@ -4,17 +4,18 @@
 ConsoleToolBarFactory::ConsoleToolBarFactory()
 	:ToolBarFactoryBase()
 {
+    juce::String id0 = "CTB_RunStop";
     this->toolBarItems = {
         {
             .type = Item::Type::Normal,
-            .id = "CTB_RunStop",
+            .id = id0,
             .stateGetter = []()->bool {
             bool isRuning = false;
             CallBackManager::call<void(bool&)>("lambda_StatusBar_VMRunning_bool&",isRuning);
             return isRuning;
             },
-            .callBack = [] {
-                CallBackManager::call<void(void)>("lambda_ConsoleToolBar_RSActived_void");
+            .callBack = [id0] {
+                CallBackManager::call<void(const juce::String&)>("lambda_ConsoleToolBar_RSActived_const_juce::String&", id0);
             }
         },
         {.type = Item::Type::Normal,.id = "CTB_Load",.toggleAble = false,.callBack = [] {CallBackManager::call<void(void)>("lambda_CodeWidget_Load_void"); }},

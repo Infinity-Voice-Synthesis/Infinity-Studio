@@ -1,5 +1,7 @@
 #include "CentralWidget.h"
 #include "utils/Size.h"
+#include "utils/CallBackManager.h"
+#include "menus/utils/MenuManager.h"
 
 CentralWidget::CentralWidget() :
 	Component()
@@ -19,6 +21,10 @@ CentralWidget::CentralWidget() :
 	this->editorWidget = std::make_unique<EditorWidget>();
 	this->addChildComponent(this->editorWidget.get());
 	this->editorWidget->setVisible(true);
+
+	this->consoleWidget = std::make_unique<ConsoleWidget>();
+	this->addChildComponent(this->consoleWidget.get());
+	this->consoleWidget->setVisible(false);
 }
 
 void CentralWidget::init()
@@ -27,6 +33,20 @@ void CentralWidget::init()
 	this->toolBar->init();
 	this->statusBar->init();
 	this->editorWidget->init();
+	this->consoleWidget->init();
+
+	CallBackManager::set<void(void)>(
+		"lambda_CentralWidget_ConsoleChange_void",
+		[this] {this->consoleVisibleChange(); }
+	);
+	CallBackManager::set<void(void)>(
+		"lambda_CentralWidget_ConsoleExit_void",
+		[this] {this->consoleVisibleChange(); }
+	);
+	MenuManager::connect(
+		"MM_Shell_View",
+		[this](bool actived) {this->openConsole(); }
+	);
 }
 
 void CentralWidget::resized()
@@ -51,4 +71,24 @@ void CentralWidget::resized()
 		(bool)Config::tm("toolBar", "left") ? this->toolBar->getWidth() : 0,
 		this->menuBar->getHeight()
 	);
+
+	this->consoleWidget->setSize(this->getWidth() - this->toolBar->getWidth(), this->getHeight() - this->menuBar->getHeight() - this->statusBar->getHeight());
+	this->consoleWidget->setTopLeftPosition(
+		(bool)Config::tm("toolBar", "left") ? this->toolBar->getWidth() : 0,
+		this->menuBar->getHeight()
+	);
+}
+
+void CentralWidget::consoleVisibleChange()
+{
+	bool cV = this->consoleWidget->isVisible();
+	this->consoleWidget->setVisible(!cV);
+	this->editorWidget->setVisible(cV);
+}
+
+void CentralWidget::openConsole()
+{
+	if (!this->consoleWidget->isVisible()) {
+		this->consoleVisibleChange();
+	}
 }

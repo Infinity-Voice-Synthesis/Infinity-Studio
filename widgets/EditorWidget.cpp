@@ -1,7 +1,7 @@
 #include "EditorWidget.h"
 #include "utils/Size.h"
 #include "utils/Device.h"
-#include "utils/CallBackManager.h"
+#include "menus/utils/MenuManager.h"
 
 EditorWidget::EditorWidget()
 	:Component()
@@ -51,16 +51,16 @@ EditorWidget::~EditorWidget()
 
 void EditorWidget::init()
 {
-	CallBackManager::set<void(bool)>(
-		"lambda_EditorWidget_TrackViewActived_bool",
+	MenuManager::connect(
+		"MM_Track_View",
 		[this](bool actived) {this->active(actived, EditorWidget::ActivedWidget::TrackView); }
 	);
-	CallBackManager::set<void(bool)>(
-		"lambda_EditorWidget_NoteViewActived_bool",
+	MenuManager::connect(
+		"MM_Note_View",
 		[this](bool actived) {this->active(actived, EditorWidget::ActivedWidget::NoteView); }
 	);
-	CallBackManager::set<void(bool)>(
-		"lambda_EditorWidget_ParameterViewActived_bool",
+	MenuManager::connect(
+		"MM_Parameter_View",
 		[this](bool actived) {this->active(actived, EditorWidget::ActivedWidget::ParamView); }
 	);
 }

@@ -22,10 +22,9 @@ void StatusBar::init()
 	bool& VMIsRunning = ::__VMIsRunning;
 
 	Utils::getTSG().insert("SB_VirtualMachineState", [&VMIsRunning](const juce::String& id)->juce::String {return Config::tr(VMIsRunning ? "VMSB_Busy" : "VMSB_Free"); });
-	Utils::getTSG().insert("SB_VirtualMachineError", [](const juce::String& id)->juce::String {return "No Errors"; });
-	Utils::getTSG().insert("SB_Pattern", [](const juce::String& id)->juce::String {return "No Pattern"; });
+	Utils::getTSG().insert("SB_VirtualMachineError", [](const juce::String& id)->juce::String {return Config::tr("VMEB_NoErrors"); });
+	Utils::getTSG().insert("SB_Pattern", [](const juce::String& id)->juce::String {return Config::tr("PB_NoPatterns"); });
 	Utils::getISG().insert("SB_Console", [](const juce::String& id)->juce::DrawableImage* {return Source::makeImage(Config::tsFull("SB_Console", "icon-normal")); });
-	Utils::getISG().insert("SB_VirtualMachineError", [](const juce::String& id)->juce::DrawableImage* {return Source::makeImage(Config::tsFull("SB_VirtualMachineError", "icon-normal")); });
 
 	CallBackManager::set<void(bool&)>(
 		"lambda_StatusBar_VMRunning_bool&",
