@@ -9,6 +9,7 @@
 #include "utils/Utils.h"
 #include "utils/CallBackManager.h"
 #include "Ilvm/ILVM.h"
+#include "utils/Egg.h"
 
 class InfinityStudioApplication final :
     public juce::JUCEApplication
@@ -22,6 +23,7 @@ public:
 
     void initialise(const juce::String& commandLine) override
     {
+        Egg::init();//初始化彩蛋
         Utils::init();//初始化单例复用类
 
         Config::init(
@@ -70,6 +72,7 @@ public:
         ILVM::destory();
         Config::destory();
         Utils::destory();
+        Egg::destory();
         this->quit();
     };
 

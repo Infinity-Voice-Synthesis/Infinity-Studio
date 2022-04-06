@@ -178,6 +178,7 @@
     <ClCompile Include="uiModels\ConsoleToolBarFactory.cpp" />
     <ClCompile Include="uiModels\ToolBarFactoryBase.cpp" />
     <ClCompile Include="widgets\ConsoleToolBar.cpp" />
+    <ClCompile Include="utils\Egg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JuceLibraryCode\JuceHeader.h" />
@@ -389,6 +390,7 @@
     <ClInclude Include="uiModels\ConsoleToolBarFactory.h" />
     <ClInclude Include="uiModels\ToolBarFactoryBase.h" />
     <ClInclude Include="widgets\ConsoleToolBar.h" />
+    <ClInclude Include="utils\Egg.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc">
