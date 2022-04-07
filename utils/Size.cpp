@@ -16,3 +16,8 @@ double Size::editorHScoller_height = 0.025;//横向带预览卷滚缩放条高度
 double Size::editorRuler_height = 0.025;//时间标尺高度
 
 double Size::consoleToolBar_width = 0.030;//终端工具栏宽度
+
+double Size::consoleWidget_min_width = 0.2;//终端控件最小宽度
+double Size::consoleWidget_max_width = 1.0;//终端控件最大宽度
+double Size::consoleWidget_prefred_width = 0.5;//终端控件默认宽度
+double Size::consoleSplitor_width = 0.004;//终端分割条宽度

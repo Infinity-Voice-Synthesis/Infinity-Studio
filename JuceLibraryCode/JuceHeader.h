@@ -40,8 +40,8 @@
 namespace ProjectInfo
 {
     const char* const  projectName    = "InfinityStudio";
-    const char* const  companyName    = "InfinitySVS";
+    const char* const  companyName    = "";
     const char* const  versionString  = "0.0.1";
-    const int          versionNumber  = 0x00001;
+    const int          versionNumber  = 0x1;
 }
 #endif

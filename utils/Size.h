@@ -16,4 +16,8 @@ public:
 	static double editorHScoller_height;
 	static double editorRuler_height;
 	static double consoleToolBar_width;
+	static double consoleWidget_min_width;
+	static double consoleWidget_max_width;
+	static double consoleWidget_prefred_width;
+	static double consoleSplitor_width;
 };
