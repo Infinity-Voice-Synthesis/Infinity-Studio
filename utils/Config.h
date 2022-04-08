@@ -14,16 +14,18 @@ public:
 	static void init(const juce::String& path, const juce::String& branch, const juce::String& package);
 	static void destory();
 
-	static juce::var cf(const juce::String& key);
-	static juce::String tr(const juce::String& s);
-	static juce::var tm(const juce::String& obj, const juce::String& key);
-	static juce::String ts(const juce::String& obj, const juce::String& key);
-	static juce::String tsFull(const juce::String& obj, const juce::String& key);
+	static juce::var cf(const juce::String& key);//配置文件
+	static juce::String tr(const juce::String& s);//翻译文件
+	static juce::var tm(const juce::String& obj, const juce::String& key);//主题配置文件
+	static juce::String ts(const juce::String& obj, const juce::String& key);//主题资源文件
+	static juce::String tsFull(const juce::String& obj, const juce::String& key);//主题资源文件完整路径
+	static juce::Colour tc(const juce::String& obj, const juce::String& key);//主题颜色
 
 	static juce::var& get();
 	static juce::var& getTrans();
 	static juce::var& getTheme();
 	static juce::var& getThemeSrc();
+	static juce::HashMap<juce::String, juce::var>& getThemeColors();
 
 	static juce::String script(const juce::String& name);
 	static juce::String scriptDir();
@@ -61,6 +63,8 @@ private:
 	const juce::String scriptPath;
 	const juce::String srcPath;
 	const juce::String palettePath;
+
+	juce::HashMap<juce::String, juce::var> palettes;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Config)
 };

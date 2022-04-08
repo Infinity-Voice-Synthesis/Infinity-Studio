@@ -1,4 +1,5 @@
 #include "Config.h"
+#include "Data.h"
 
 std::unique_ptr<Config> Config::_config = std::make_unique<Config>();
 
@@ -46,6 +47,14 @@ void Config::refreshConfigs()
 
 	juce::File tsFile(themeSrcFile);
 	*(Config::_config->themeSources) = juce::JSON::parse(tsFile);
+
+	Config::_config->palettes.clear();
+	juce::FileSearchPath searchPath(Config::_config->getThemePalettePath());
+	juce::Array<juce::File> files = searchPath.findChildFiles(juce::File::findFiles, false, "*.json");
+	for (auto& f : files) {
+		const juce::String& fileName = f.getFileNameWithoutExtension();
+		Config::_config->palettes.set(fileName, juce::JSON::parse(f));
+	}
 }
 
 void Config::refreshTranslates()
@@ -93,6 +102,25 @@ juce::String Config::tsFull(const juce::String& obj, const juce::String& key)
 	);
 }
 
+juce::Colour Config::tc(const juce::String& obj, const juce::String& key)
+{
+	juce::HashMap<juce::String, juce::var>& plal = Config::getThemeColors();
+	if (!plal.contains(obj)) {
+		return juce::Colours::black;
+	}
+	juce::var& pal = plal.getReference(obj);
+	if (!pal.isObject()) {
+		return juce::Colours::black;
+	}
+	if (pal.hasProperty(key)) {
+		return Data::parseStringToColour(pal[key.toStdString().c_str()].toString());
+	}
+	if (pal.hasProperty("parent")) {
+		return Config::tc(pal["parent"].toString(), key);
+	}
+	return juce::Colours::black;
+}
+
 juce::var& Config::get()
 {
 	return *(Config::_config->configs);
@@ -111,6 +139,11 @@ juce::var& Config::getTheme()
 juce::var& Config::getThemeSrc()
 {
 	return *(Config::_config->themeSources);
+}
+
+juce::HashMap<juce::String, juce::var>& Config::getThemeColors()
+{
+	return Config::_config->palettes;
 }
 
 juce::String Config::script(const juce::String& name)

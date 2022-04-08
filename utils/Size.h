@@ -20,4 +20,5 @@ public:
 	static double consoleWidget_max_width;
 	static double consoleWidget_prefred_width;
 	static double consoleSplitor_width;
+	static double consoleFont_height;
 };

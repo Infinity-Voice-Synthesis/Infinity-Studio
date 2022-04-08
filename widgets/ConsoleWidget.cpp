@@ -1,6 +1,7 @@
 #include "ConsoleWidget.h"
 #include "utils/Size.h"
 #include "utils/Device.h"
+#include "utils/Config.h"
 
 ConsoleWidget::ConsoleWidget()
 	:Component()
@@ -50,6 +51,26 @@ void ConsoleWidget::init()
 {
 	this->consoleToolBar->init();
 	this->consoleResultWidget->init();
+
+	juce::CodeEditorComponent::ColourScheme cs;
+	
+	auto csF = [&cs](const juce::String& id) {
+		cs.set(id, Config::tc("codeEditor", id));
+	};
+	
+	csF("Error");
+	csF("Comment");
+	csF("Keyword");
+	csF("Operator");
+	csF("Identifier");
+	csF("Integer");
+	csF("Float");
+	csF("String");
+	csF("Bracket");
+	csF("Punctuation");
+	csF("Preprocessor Text");
+	
+	this->codeEditor->setColourScheme(cs);
 }
 
 void ConsoleWidget::resized()
@@ -68,6 +89,8 @@ void ConsoleWidget::resized()
 		this->getWidth() - this->consoleToolBar->getWidth(), this->getHeight(),
 		false, true
 	);
+
+	this->codeEditor->setFont(this->codeEditor->getFont().withHeight(Size::consoleFont_height * screenArea.getHeight() * screenScale));
 }
 
 void ConsoleWidget::reStr()
