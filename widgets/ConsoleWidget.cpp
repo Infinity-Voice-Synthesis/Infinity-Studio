@@ -2,6 +2,7 @@
 #include "utils/Size.h"
 #include "utils/Device.h"
 #include "utils/Config.h"
+#include "utils/CallBackManager.h"
 
 ConsoleWidget::ConsoleWidget()
 	:Component()
@@ -40,6 +41,19 @@ ConsoleWidget::ConsoleWidget()
 	};
 	
 	this->reStr();
+	
+	this->fileChooser = std::make_unique<juce::FileChooser>(
+		Config::tr("CFD_TitleLoad"),
+		Config::scriptDir(), "*.lua",
+		true, true,
+		this
+		);
+	this->saveFileChooser = std::make_unique<juce::FileChooser>(
+		Config::tr("CFD_TitleSave"),
+		Config::scriptDir(), "*.lua",
+		true, true,
+		this
+		);
 }
 
 ConsoleWidget::~ConsoleWidget()
@@ -71,6 +85,9 @@ void ConsoleWidget::init()
 	csF("Preprocessor Text");
 	
 	this->codeEditor->setColourScheme(cs);
+	
+	CallBackManager::set<void(void)>("lambda_CodeWidget_Load_void", [this] {this->load(); });
+	CallBackManager::set<void(void)>("lambda_CodeWidget_Save_void", [this] {this->save(); });
 }
 
 void ConsoleWidget::resized()
@@ -111,4 +128,51 @@ void ConsoleWidget::reStr()
 		barWidth, barWidth,
 		barWidth
 	);
+}
+
+void ConsoleWidget::load()
+{
+	if (this->fileChooser->showDialog(
+		juce::FileBrowserComponent::FileChooserFlags::canSelectFiles |
+		juce::FileBrowserComponent::FileChooserFlags::openMode,
+		nullptr
+	)) {
+		juce::File file = this->fileChooser->getResult();
+		juce::MemoryBlock memdata;
+		file.loadFileAsData(memdata);
+		this->codeDocument->replaceAllContent(memdata.toString());
+	}
+}
+
+void ConsoleWidget::save()
+{
+	if (this->saveFileChooser->showDialog(
+		juce::FileBrowserComponent::FileChooserFlags::canSelectFiles |
+		juce::FileBrowserComponent::FileChooserFlags::saveMode |
+		juce::FileBrowserComponent::FileChooserFlags::warnAboutOverwriting,
+		nullptr
+	)) {
+		juce::File file = this->saveFileChooser->getResult();
+		juce::String fileStr = this->codeDocument->getAllContent();
+		const char* content = fileStr.toRawUTF8();
+		int size = fileStr.length();
+		if (file.replaceWithData(content, size)) {
+			juce::AlertWindow::showMessageBox(
+				juce::AlertWindow::AlertIconType::InfoIcon,
+				Config::tr("CFD_TitleSave"),
+				Config::tr("CFD_MessageSaveOK_0") +
+				file.getFullPathName() +
+				Config::tr("CFD_MessageSaveOK_1")
+			);
+		}
+		else {
+			juce::AlertWindow::showMessageBox(
+				juce::AlertWindow::AlertIconType::WarningIcon,
+				Config::tr("CFD_TitleSave"),
+				Config::tr("CFD_MessageSaveError_0") +
+				file.getFullPathName() +
+				Config::tr("CFD_MessageSaveError_1")
+			);
+		}
+	}
 }

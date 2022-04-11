@@ -21,4 +21,8 @@ public:
 	static double consoleWidget_prefred_width;
 	static double consoleSplitor_width;
 	static double consoleFont_height;
+	static double consoleWidget_min_height;
+	static double consoleWidget_max_height;
+	static double consoleWidget_prefred_height;
+	static double consoleSplitor_height;
 };

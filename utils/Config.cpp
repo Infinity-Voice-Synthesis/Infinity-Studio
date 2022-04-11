@@ -77,10 +77,10 @@ juce::String Config::tr(const juce::String& s)
 	if (s.isEmpty()) {
 		return s;
 	}
-	juce::String&& str = Config::getTrans()[s.toStdString().c_str()].toString();
-	if (str.isEmpty()) {
+	if (!Config::getTrans().hasProperty(s)) {
 		return s;
 	}
+	juce::String&& str = Config::getTrans()[s.toStdString().c_str()].toString();
 	return str;
 }
 
@@ -104,6 +104,9 @@ juce::String Config::tsFull(const juce::String& obj, const juce::String& key)
 
 juce::Colour Config::tc(const juce::String& obj, const juce::String& key)
 {
+	if (key == "parent") {
+		return juce::Colours::black;
+	}
 	juce::HashMap<juce::String, juce::var>& plal = Config::getThemeColors();
 	if (!plal.contains(obj)) {
 		return juce::Colours::black;

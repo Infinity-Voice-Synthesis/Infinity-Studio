@@ -14,6 +14,9 @@ public:
 
     void resized()override;
 
+    void load();
+	void save();
+
 private:
     std::unique_ptr<juce::CodeDocument> codeDocument;
 	std::unique_ptr<juce::LuaTokeniser> codeTokeniser;
@@ -28,6 +31,9 @@ private:
 	
     std::vector<juce::Component*> components;
 
+	std::unique_ptr<juce::FileChooser> fileChooser;
+	std::unique_ptr<juce::FileChooser> saveFileChooser;
+	
     void reStr();
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConsoleWidget)
