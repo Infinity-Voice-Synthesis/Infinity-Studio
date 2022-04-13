@@ -26,7 +26,7 @@ ConsoleListModel::~ConsoleListModel()
 
 void ConsoleListModel::addMessage(const juce::String& message, ConsoleListModel::MessageType type)
 {
-	this->messageList.insert(this->messageList.begin(), std::make_pair(message, type));
+	this->messageList.push_back(std::make_pair(message, type));
 }
 
 void ConsoleListModel::clear()
@@ -48,7 +48,7 @@ void ConsoleListModel::paintListBoxItem(int rowNumber, juce::Graphics& g, int wi
 	const double& screenScale = Device::getScreenScale();
 	const int tipWidth = Size::consoleListTip_width * screenArea.getWidth() * screenScale;
 	
-	auto& pair = this->messageList[rowNumber];
+	auto& pair = this->messageList[this->messageList.size() - rowNumber - 1];
 	
 	switch (pair.second) {
 	case ConsoleListModel::MessageType::Info:
@@ -108,5 +108,5 @@ juce::String ConsoleListModel::getTooltipForRow(int rowNumber)
 	if (!(rowNumber >= 0 && rowNumber < this->messageList.size())) {
 		return "";
 	}
-	return this->messageList[rowNumber].first;
+	return this->messageList[this->messageList.size() - rowNumber - 1].first;
 }
