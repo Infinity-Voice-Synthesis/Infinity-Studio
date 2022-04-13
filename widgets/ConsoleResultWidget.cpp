@@ -12,6 +12,8 @@ ConsoleResultWidget::ConsoleResultWidget()
 	this->textEditor->setVisible(true);
 	
 	this->listBox = std::make_unique<juce::ListBox>();
+	this->listBox->setRowSelectedOnMouseDown(true);
+	this->listBox->setMultipleSelectionEnabled(false);
 	this->addChildComponent(this->listBox.get());
 	this->listBox->setVisible(true);
 	
@@ -32,6 +34,8 @@ ConsoleResultWidget::ConsoleResultWidget()
 	};
 
 	this->reStr();
+
+	this->listModel = std::make_unique<ConsoleListModel>();
 }
 
 ConsoleResultWidget::~ConsoleResultWidget()
@@ -41,7 +45,7 @@ ConsoleResultWidget::~ConsoleResultWidget()
 
 void ConsoleResultWidget::init()
 {
-	
+	this->listBox->setModel(this->listModel.get());
 }
 
 void ConsoleResultWidget::resized()

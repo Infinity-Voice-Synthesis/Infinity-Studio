@@ -140,6 +140,7 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="uiModels\ConsoleListModel.cpp" />
     <ClCompile Include="utils\Egg.cpp" />
     <ClCompile Include="widgets\ConsoleResultWidget.cpp" />
     <ClCompile Include="widgets\ConsoleToolBar.cpp" />
@@ -313,6 +314,7 @@
     <ClCompile Include="Pb\utils\pair.pb.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="uiModels\ConsoleListModel.h" />
     <ClInclude Include="utils\Egg.h" />
     <ClInclude Include="widgets\ConsoleResultWidget.h" />
     <ClInclude Include="widgets\ConsoleToolBar.h" />

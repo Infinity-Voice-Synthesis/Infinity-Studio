@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include "uiModels/ConsoleListModel.h"
 
 class ConsoleResultWidget :
     public juce::Component
@@ -20,6 +21,8 @@ private:
 
 	std::vector<juce::Component*> components;
 
+	std::unique_ptr<ConsoleListModel> listModel;
+	
 	void reStr();
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConsoleResultWidget)
 };

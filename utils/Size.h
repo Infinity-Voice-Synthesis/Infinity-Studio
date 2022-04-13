@@ -25,4 +25,5 @@ public:
 	static double consoleWidget_max_height;
 	static double consoleWidget_prefred_height;
 	static double consoleSplitor_height;
+	static double consoleListTip_width;
 };

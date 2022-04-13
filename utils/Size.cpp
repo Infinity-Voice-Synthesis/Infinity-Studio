@@ -28,3 +28,5 @@ double Size::consoleWidget_min_height = 0.2;//终端控件最小高度
 double Size::consoleWidget_max_height = 1.0;//终端控件最大高度
 double Size::consoleWidget_prefred_height = 0.5;//终端控件默认高度
 double Size::consoleSplitor_height = 0.005;//终端分割条高度
+
+double Size::consoleListTip_width = 0.0035l;//终端输出列表标签宽度

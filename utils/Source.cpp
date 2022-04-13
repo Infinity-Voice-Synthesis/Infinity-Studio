@@ -57,11 +57,6 @@ bool Source::get(const juce::String& path, const Item::Type& type, void*& ptr, s
 	return true;
 }
 
-juce::DrawableImage* Source::getImage(const juce::String& path)
-{
-	return Source::makeImage(path);
-}
-
 juce::DrawableImage* Source::makeImage(const juce::String& path)
 {
 	void* ptr = nullptr;
@@ -71,4 +66,14 @@ juce::DrawableImage* Source::makeImage(const juce::String& path)
 	}
 
 	return reinterpret_cast<juce::DrawableImage*>(juce::Drawable::createFromImageData(ptr, size).release());
+}
+
+juce::DrawableImage* Source::makeImageSafe(const juce::String& path)
+{
+	if (Source::_source->imageList.contains(path)) {
+		return Source::_source->imageList.getReference(path).get();
+	}
+	juce::DrawableImage* ptr = Source::makeImage(path);
+	Source::_source->imageList.getReference(path).reset(ptr);
+	return ptr;
 }
