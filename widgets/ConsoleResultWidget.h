@@ -9,7 +9,10 @@ public:
 	ConsoleResultWidget();
 	~ConsoleResultWidget();
 
-	void init();
+	void init(std::function<void(juce::StringRef)> codeShow);
+	
+	void addMessage(juce::StringRef message, ConsoleListModel::MessageType type);
+	void clear();
 	
 	void resized()override;
 private:
@@ -22,6 +25,8 @@ private:
 	std::vector<juce::Component*> components;
 
 	std::unique_ptr<ConsoleListModel> listModel;
+
+	std::function<void(juce::StringRef)> codeShow;
 	
 	void reStr();
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConsoleResultWidget)

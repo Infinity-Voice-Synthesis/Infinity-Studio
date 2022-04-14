@@ -25,12 +25,12 @@ public:
         juce::String id;
         StatusBarButton::ShowType showType = StatusBarButton::ShowType::IconAndText;
 
-        using ItemActiveFunction = std::function<void(const juce::String&)>;
-        ItemActiveFunction activeFunc = [](const juce::String& id) {};
+        using ItemActiveFunction = std::function<void(juce::StringRef)>;
+        ItemActiveFunction activeFunc = [](juce::StringRef id) {};
 
-        using ItemTextFunction = std::function<juce::String(const juce::String&)>;
+        using ItemTextFunction = std::function<juce::String(juce::StringRef)>;
         static ItemTextFunction textFunc;
-        using ItemIconFunction = std::function<std::unique_ptr<juce::Drawable>(const juce::String&)>;
+        using ItemIconFunction = std::function<std::unique_ptr<juce::Drawable>(juce::StringRef)>;
         static ItemIconFunction iconFunc;
     };
 private:
@@ -39,7 +39,7 @@ private:
     const std::unique_ptr<Item> _empty = std::make_unique<Item>();
 
 public:
-    std::pair<int, const Item&> findItem(const juce::String& id);
+    std::pair<int, const Item&> findItem(juce::StringRef id);
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatusBarFactory)

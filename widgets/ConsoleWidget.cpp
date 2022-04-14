@@ -3,6 +3,7 @@
 #include "utils/Device.h"
 #include "utils/Config.h"
 #include "utils/CallBackManager.h"
+#include "Ilvm/ILVM.h"
 
 ConsoleWidget::ConsoleWidget()
 	:Component()
@@ -63,12 +64,18 @@ ConsoleWidget::~ConsoleWidget()
 
 void ConsoleWidget::init()
 {
-	this->consoleToolBar->init();
-	this->consoleResultWidget->init();
+	this->consoleToolBar->init([this] {this->codeRunStop(); });
+
+	juce::CodeDocument* codeDocument = this->codeDocument.get();
+	auto funcCodeChange = [codeDocument](juce::StringRef message)
+	{
+		codeDocument->replaceAllContent(message);
+	};
+	this->consoleResultWidget->init(funcCodeChange);
 
 	juce::CodeEditorComponent::ColourScheme cs;
 	
-	auto csF = [&cs](const juce::String& id) {
+	auto csF = [&cs](juce::StringRef id) {
 		cs.set(id, Config::tc("codeEditor", id));
 	};
 	
@@ -88,6 +95,16 @@ void ConsoleWidget::init()
 	
 	CallBackManager::set<void(void)>("lambda_CodeWidget_Load_void", [this] {this->load(); });
 	CallBackManager::set<void(void)>("lambda_CodeWidget_Save_void", [this] {this->save(); });
+	
+	CallBackManager::set<void(juce::StringRef)>(
+		"lambda_ConsoleWidget_ErrorMessage_const_juce::String&",
+		[this](juce::StringRef mes) {this->errorMessage(mes); }
+	);
+	CallBackManager::set<void(juce::StringRef)>(
+		"lambda_ConsoleWidget_NormalMessage_const_juce::String&",
+		[this](juce::StringRef mes) {this->normalMessage(mes); }
+	);
+	CallBackManager::set<void(void)>("lambda_ConsoleWidget_ClearMessage_void", [this] {this->clearMessage(); });
 }
 
 void ConsoleWidget::resized()
@@ -175,4 +192,33 @@ void ConsoleWidget::save()
 			);
 		}
 	}
+}
+
+void ConsoleWidget::codeRunStop()
+{
+	bool isRuning = false;
+	CallBackManager::call<void(bool*)>("lambda_StatusBar_VMRunning_bool&", &isRuning);
+	if (isRuning) {
+		ILVM::stop();
+	}
+	else {
+		juce::String code = this->codeDocument->getAllContent();
+		this->consoleResultWidget->addMessage(code, ConsoleListModel::MessageType::Input);
+		ILVM::run(code);
+	}
+}
+
+void ConsoleWidget::errorMessage(juce::StringRef message)
+{
+	this->consoleResultWidget->addMessage(message, ConsoleListModel::MessageType::Error);
+}
+
+void ConsoleWidget::normalMessage(juce::StringRef message)
+{
+	this->consoleResultWidget->addMessage(message, ConsoleListModel::MessageType::Info);
+}
+
+void ConsoleWidget::clearMessage()
+{
+	this->consoleResultWidget->clear();
 }

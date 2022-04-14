@@ -5,20 +5,20 @@
 #include "utils/CallBackManager.h"
 
 StatusBarFactory::Item::ItemTextFunction StatusBarFactory::Item::textFunc
-= [](const juce::String& id)->juce::String {return Utils::getTSG().get(id); };
+= [](juce::StringRef id)->juce::String {return Utils::getTSG().get(id); };
 StatusBarFactory::Item::ItemIconFunction StatusBarFactory::Item::iconFunc
-= [](const juce::String& id)->std::unique_ptr<juce::Drawable> {return std::unique_ptr<juce::Drawable>(Utils::getISG().get(id)); };
+= [](juce::StringRef id)->std::unique_ptr<juce::Drawable> {return std::unique_ptr<juce::Drawable>(Utils::getISG().get(id)); };
 
 StatusBarFactory::StatusBarFactory() :
 	ToolbarItemFactory()
 {
 	this->statusBarItems = {
 		{.type = Item::Type::Normal,.id = "SB_Console",.showType = StatusBarButton::ShowType::Icon,
-		.activeFunc = [](const juce::String&) {CallBackManager::call<void(void)>("lambda_CentralWidget_ConsoleChange_void"); }},
+		.activeFunc = [](juce::StringRef) {CallBackManager::call<void(void)>("lambda_CentralWidget_ConsoleChange_void"); }},
 		{.type = Item::Type::Normal,.id = "SB_VirtualMachineState",.showType = StatusBarButton::ShowType::Text,
-		.activeFunc = [](const juce::String&) {CallBackManager::call<void(void)>("lambda_CentralWidget_VMStateChange_void"); }},
+		.activeFunc = [](juce::StringRef) {CallBackManager::call<void(void)>("lambda_CentralWidget_VMStateChange_void"); }},
 		{.type = Item::Type::Normal,.id = "SB_VirtualMachineError",.showType = StatusBarButton::ShowType::Text,
-		.activeFunc = [](const juce::String&) {CallBackManager::call<void(void)>("lambda_CentralWidget_VMErrorShow_void"); }},
+		.activeFunc = [](juce::StringRef) {CallBackManager::call<void(void)>("lambda_CentralWidget_VMErrorShow_void"); }},
 		{.type = Item::Type::FlexibleSpacer},
 		{.type = Item::Type::Normal,.id = "SB_Pattern",.showType = StatusBarButton::ShowType::Text}
 	};
@@ -102,7 +102,7 @@ juce::ToolbarItemComponent* StatusBarFactory::createItem(int itemId)
 	return button;
 }
 
-std::pair<int, const StatusBarFactory::Item&> StatusBarFactory::findItem(const juce::String& id)
+std::pair<int, const StatusBarFactory::Item&> StatusBarFactory::findItem(juce::StringRef id)
 {
 	for (int i = 0; i < this->statusBarItems.size(); i++) {
 		Item& item = this->statusBarItems[i];

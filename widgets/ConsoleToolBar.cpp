@@ -11,11 +11,12 @@ ConsoleToolBar::~ConsoleToolBar()
 
 }
 
-void ConsoleToolBar::init()
+void ConsoleToolBar::init(std::function<void(void)> codeRunStop)
 {
-	CallBackManager::set<void(const juce::String&)>(
+	this->codeRunStop = codeRunStop;
+	CallBackManager::set<void(juce::StringRef)>(
 		"lambda_ConsoleToolBar_RSActived_const_juce::String&",
-		[this](const juce::String& id) {this->RunStopChanged(id); }
+		[this](juce::StringRef id) {this->RunStopChanged(id); }
 	);
 
 	this->setVertical(true);
@@ -24,7 +25,7 @@ void ConsoleToolBar::init()
 	this->addDefaultItems(*(this->consoleToolBarFactory));
 }
 
-void ConsoleToolBar::RunStopChanged(const juce::String& /*id*/)
+void ConsoleToolBar::RunStopChanged(juce::StringRef /*id*/)
 {
-	
+	this->codeRunStop();
 }

@@ -43,9 +43,46 @@ ConsoleResultWidget::~ConsoleResultWidget()
 	
 }
 
-void ConsoleResultWidget::init()
+void ConsoleResultWidget::init(std::function<void(juce::StringRef)> codeShow)
 {
+	this->codeShow = codeShow;
+	
+	juce::TextEditor* editor = this->textEditor.get();
+	auto& codeShowRef = this->codeShow;
+	auto funcItemClicked = [editor, &codeShowRef](juce::StringRef message, ConsoleListModel::MessageType type)
+	{
+		switch (type)
+		{
+		case ConsoleListModel::MessageType::Input:
+		{
+			codeShowRef(message);
+			break;
+		}
+		default:
+		{
+			editor->setText(message);
+			break;
+		}
+		}
+	};
+	
+	this->listModel->init(funcItemClicked);
 	this->listBox->setModel(this->listModel.get());
+}
+
+void ConsoleResultWidget::addMessage(juce::StringRef message, ConsoleListModel::MessageType type)
+{
+	this->listModel->addMessage(message, type);
+	const juce::MessageManagerLock lock;
+	this->listBox->updateContent();
+	this->listBox->selectRow(0);
+}
+
+void ConsoleResultWidget::clear()
+{
+	this->listModel->clear();
+	const juce::MessageManagerLock lock;
+	this->listBox->updateContent();
 }
 
 void ConsoleResultWidget::resized()

@@ -35,8 +35,8 @@ public:
         Config::refreshTranslates();//配置初始化
 
         ILVM::init(
-            [](const juce::String& str) {CallBackManager::call<void(const juce::String&)>("lambda_ConsoleWidget_ErrorMessage_const_juce::String&", str); },
-            [](const juce::String& str) {CallBackManager::call<void(const juce::String&)>("lambda_ConsoleWidget_NormalMessage_const_juce::String&", str); },
+            [](juce::StringRef str) {CallBackManager::call<void(juce::StringRef)>("lambda_ConsoleWidget_ErrorMessage_const_juce::String&", str); },
+            [](juce::StringRef str) {CallBackManager::call<void(juce::StringRef)>("lambda_ConsoleWidget_NormalMessage_const_juce::String&", str); },
             [] {CallBackManager::call<void(void)>("lambda_ConsoleWidget_ClearMessage_void"); },
             [] {CallBackManager::call<void(bool)>("lambda_StatusBar_VMStartStop_bool", true); },
             [] {CallBackManager::call<void(bool)>("lambda_StatusBar_VMStartStop_bool", false); }
@@ -68,7 +68,6 @@ public:
         google::protobuf::ShutdownProtobufLibrary();
         MenuManager::destory();
         Source::destory();
-        //-------------------------前后端分界-----------------------------//
         ILVM::destory();
         Config::destory();
         Utils::destory();

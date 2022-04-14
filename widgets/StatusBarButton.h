@@ -15,7 +15,7 @@ public:
     using ItemStateCheckFunction = std::function<bool(const ShowType&, const ShowType&)>;
     static ItemStateCheckFunction stateCheckFunc;
 
-    StatusBarButton(const int iid, ShowType showType, const juce::String& buttonText,
+    StatusBarButton(const int iid, ShowType showType, juce::StringRef buttonText,
         std::unique_ptr<juce::Drawable> normalIm,
         std::unique_ptr<juce::Drawable> toggledOnIm);
     ~StatusBarButton();

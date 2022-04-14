@@ -7,7 +7,7 @@ StatusBarButton::ItemStateCheckFunction StatusBarButton::stateCheckFunc
     return static_cast<uint64_t>(arg1) & static_cast<uint64_t>(arg2);
 };
 
-StatusBarButton::StatusBarButton(const int iid, ShowType showType, const juce::String& buttonText,
+StatusBarButton::StatusBarButton(const int iid, ShowType showType, juce::StringRef buttonText,
     std::unique_ptr<juce::Drawable> normalIm,
     std::unique_ptr<juce::Drawable> toggledOnIm)
     :ToolbarItemComponent(iid,buttonText,true),
@@ -28,7 +28,7 @@ bool StatusBarButton::getToolbarItemSizes(int toolbarDepth, bool isToolbarVertic
     if (isToolbarVertical) {
         return false;
     }
-    const juce::String& text = this->getButtonText();
+    juce::StringRef text = this->getButtonText();
     juce::Font font(Utils::getTypeFace());
     font.setHeight(toolbarDepth);
     int stringWidth = font.getStringWidth(text);

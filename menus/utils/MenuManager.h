@@ -22,7 +22,7 @@ public:
 	static void actived(juce::String id);
 	static bool isActived(juce::String id);
 
-	static void setActiveCallBack(std::function<void(const juce::String&, bool)> activeCallBack);
+	static void setActiveCallBack(std::function<void(juce::StringRef, bool)> activeCallBack);
 
 	static void connect(juce::String id, std::function<void(bool)> Func);
 	static void reset(juce::String id);

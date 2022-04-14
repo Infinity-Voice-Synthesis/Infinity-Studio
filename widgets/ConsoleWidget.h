@@ -17,6 +17,12 @@ public:
     void load();
 	void save();
 
+    void errorMessage(juce::StringRef message);
+	void normalMessage(juce::StringRef message);
+	void clearMessage();
+
+    void codeRunStop();
+
 private:
     std::unique_ptr<juce::CodeDocument> codeDocument;
 	std::unique_ptr<juce::LuaTokeniser> codeTokeniser;

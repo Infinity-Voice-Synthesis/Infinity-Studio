@@ -73,7 +73,7 @@ juce::ToolbarItemComponent* ToolBarFactoryBase::createItem(int itemId)
 	return button;
 }
 
-int ToolBarFactoryBase::getItemIndex(const juce::String& id)
+int ToolBarFactoryBase::getItemIndex(juce::StringRef id)
 {
 	for (int i = 0; i < this->toolBarItems.size(); i++) {
 		Item& item = this->toolBarItems[i];

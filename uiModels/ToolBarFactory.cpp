@@ -4,7 +4,7 @@
 ToolBarFactory::ToolBarFactory()
     :ToolBarFactoryBase()
 {
-    auto makeItem = [](const juce::String& id)->const Item {return { .type = Item::Type::Normal, .id = id, .stateGetter = [id]() {return MenuManager::isActived(id); },.callBack = [id] {MenuManager::actived(id); } }; };
+    auto makeItem = [](juce::StringRef id)->const Item {return { .type = Item::Type::Normal, .id = id, .stateGetter = [id]() {return MenuManager::isActived(id); },.callBack = [id] {MenuManager::actived(id); } }; };
     this->toolBarItems = {
         makeItem("MM_Explore_Mode"),
         makeItem("MM_Edit_Mode"),

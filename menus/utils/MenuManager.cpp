@@ -129,7 +129,7 @@ bool MenuManager::isActived(juce::String id)
 	return MenuManager::_menuStateMachine->isActived(id);
 }
 
-void MenuManager::setActiveCallBack(std::function<void(const juce::String&, bool)> activeCallBack)
+void MenuManager::setActiveCallBack(std::function<void(juce::StringRef, bool)> activeCallBack)
 {
 	MenuManager::_menuStateMachine->setActiveCallBack(activeCallBack);
 }

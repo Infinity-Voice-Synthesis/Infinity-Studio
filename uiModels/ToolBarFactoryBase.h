@@ -12,7 +12,7 @@ public:
     void getDefaultItemSet(juce::Array<int>& ids)override;
     juce::ToolbarItemComponent* createItem(int itemId)override;
 
-    int getItemIndex(const juce::String& id);
+    int getItemIndex(juce::StringRef id);
 
 protected:
     struct Item {

@@ -9,12 +9,14 @@ public:
     ConsoleToolBar();
     ~ConsoleToolBar();
 
-    void init();
+    void init(std::function<void(void)> codeRunStop);
 
-    void RunStopChanged(const juce::String& id);
+    void RunStopChanged(juce::StringRef id);
 
 private:
     std::unique_ptr<ConsoleToolBarFactory> consoleToolBarFactory;
+    std::function<void(void)> codeRunStop;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConsoleToolBar)
 };
 

@@ -1,17 +1,16 @@
 ﻿#include "LThread.h"
 #include "utils/Config.h"
+#include "ILVM.h"
 
 extern "C" {
 #include "Lua/lstate.h"
 }
 
-juce::String LThread::destoryId;
-
 void LThread::connect(
-	std::function<void(const juce::String&)> errorMessage,
-	std::function<void(const juce::String&)> normalMessage,
-	std::function<void(const juce::String&)> tStarted,
-	std::function<void(const juce::String&)> tEnded
+	std::function<void(juce::StringRef)> errorMessage,
+	std::function<void(juce::StringRef)> normalMessage,
+	std::function<void(juce::StringRef)> tStarted,
+	std::function<void(juce::StringRef)> tEnded
 )
 {
 	this->errorMessage = errorMessage;
@@ -22,15 +21,10 @@ void LThread::connect(
 
 void LThread::disconnect()
 {
-	this->errorMessage = [](const juce::String&){};
-	this->normalMessage = [](const juce::String&) {};
-	this->tStarted = [](const juce::String&) {};
-	this->tEnded = [](const juce::String&) {};
-}
-
-void LThread::set_destory(const juce::String& destoryId)
-{
-	LThread::destoryId = destoryId;
+	this->errorMessage = [](juce::StringRef){};
+	this->normalMessage = [](juce::StringRef) {};
+	this->tStarted = [](juce::StringRef) {};
+	this->tEnded = [](juce::StringRef) {};
 }
 
 void LThread::hookFunction(lua_State* L, lua_Debug* ar)
@@ -40,7 +34,7 @@ void LThread::hookFunction(lua_State* L, lua_Debug* ar)
 	mutex->enterRead();
 	juce::String tName = (*str);
 	mutex->exitRead();
-	if (tName == LThread::destoryId) {
+	if (!ILVM::vm || tName == ILVM::vm->destoryId) {
 		lua_pushstring(L, "This thread is destoried!");
 		lua_error(L);
 	}
@@ -86,6 +80,12 @@ void LThread::run()
 		bool error = luaL_dofile(this->lstate, this->lFileName.toStdString().c_str());
 		if (error) {
 			std::string str = lua_tostring(this->lstate, -1);
+			this->idMutex.enterRead();
+			juce::String tName = this->Id;
+			this->idMutex.exitRead();
+			if (!ILVM::vm || tName == ILVM::vm->destoryId) {
+				return;
+			}
 			this->errorMessage(juce::String::createStringFromData(str.c_str(), str.size()));
 			lua_pop(this->lstate, 1);
 			this->tEnded(this->Id);
@@ -97,6 +97,12 @@ void LThread::run()
 		this->strList.pop();
 		if (error) {
 			std::string str = lua_tostring(this->lstate, -1);
+			this->idMutex.enterRead();
+			juce::String tName = this->Id;
+			this->idMutex.exitRead();
+			if (!ILVM::vm || tName == ILVM::vm->destoryId) {
+				return;
+			}
 			this->errorMessage(juce::String::createStringFromData(str.c_str(), str.size()));
 			lua_pop(this->lstate, 1);
 		}
@@ -104,7 +110,7 @@ void LThread::run()
 	this->tEnded(this->Id);
 }
 
-bool LThread::doFile(const juce::String& name)
+bool LThread::doFile(juce::StringRef name)
 {
 	if (!this->Id.isEmpty()) {
 		if (!this->isThreadRunning()) {
@@ -117,7 +123,7 @@ bool LThread::doFile(const juce::String& name)
 	return false;
 }
 
-bool LThread::doString(const juce::String& str)
+bool LThread::doString(juce::StringRef str)
 {
 	if (!this->Id.isEmpty()) {
 		this->tType = LType::DoString;
@@ -133,7 +139,7 @@ bool LThread::doString(const juce::String& str)
 	return false;
 }
 
-bool LThread::setId(const juce::String& id)
+bool LThread::setId(juce::StringRef id)
 {
 	if (!id.isEmpty()) {
 		if (this->Id.isEmpty()) {
@@ -144,7 +150,7 @@ bool LThread::setId(const juce::String& id)
 	return false;
 }
 
-const juce::String& LThread::getId()
+juce::StringRef LThread::getId()
 {
 	return this->Id;
 }
@@ -154,14 +160,14 @@ void LThread::beginGlobalTable()
 	lua_newtable(this->lstate);
 }
 
-void LThread::endGlobalTable(const juce::String& name)
+void LThread::endGlobalTable(juce::StringRef name)
 {
-	lua_setglobal(this->lstate, name.toStdString().c_str());
+	lua_setglobal(this->lstate, name);	
 }
 
-void LThread::beginTable(const juce::String& name)
+void LThread::beginTable(juce::StringRef name)
 {
-	lua_pushstring(this->lstate, name.toStdString().c_str());
+	lua_pushstring(this->lstate, name);
 	lua_newtable(this->lstate);
 }
 
@@ -170,9 +176,9 @@ void LThread::endTable()
 	lua_settable(this->lstate, -3);
 }
 
-void LThread::addFunction(const juce::String& name, lua_CFunction function)
+void LThread::addFunction(juce::StringRef name, lua_CFunction function)
 {
-	lua_pushstring(this->lstate, name.toStdString().c_str());
+	lua_pushstring(this->lstate, name);
 	lua_pushcfunction(this->lstate, function);
 	lua_settable(this->lstate, -3);
 }
@@ -194,7 +200,7 @@ void LThread::loadUtils()
 	}
 }
 
-bool LThread::destory(const juce::String& id)
+bool LThread::destory(juce::StringRef id)
 {
 	if (this->isThreadRunning()) {
 		this->idMutex.enterWrite();
@@ -206,7 +212,7 @@ bool LThread::destory(const juce::String& id)
 	return false;
 }
 
-bool LThread::checkShare(const juce::String& key)
+bool LThread::checkShare(juce::StringRef key)
 {
 	this->shareMutex.lock();
 	bool result = this->shareData.contains(key);
@@ -214,7 +220,7 @@ bool LThread::checkShare(const juce::String& key)
 	return result;
 }
 
-void* LThread::newShare(const juce::String& key, size_t size)
+void* LThread::newShare(juce::StringRef key, size_t size)
 {
 	if (checkShare(key)) {
 		return nullptr;
@@ -226,7 +232,7 @@ void* LThread::newShare(const juce::String& key, size_t size)
 	return result;
 }
 
-bool LThread::removeShare(const juce::String& key)
+bool LThread::removeShare(juce::StringRef key)
 {
 	if (!checkShare(key)) {
 		return false;
@@ -238,7 +244,7 @@ bool LThread::removeShare(const juce::String& key)
 	return true;
 }
 
-void* LThread::getShare(const juce::String& key)
+void* LThread::getShare(juce::StringRef key)
 {
 	if (!checkShare(key)) {
 		return nullptr;
@@ -249,7 +255,7 @@ void* LThread::getShare(const juce::String& key)
 	return result;
 }
 
-size_t LThread::sizeShare(const juce::String& key)
+size_t LThread::sizeShare(juce::StringRef key)
 {
 	if (!checkShare(key)) {
 		return 0;

@@ -8,7 +8,7 @@
 ConsoleListModel::ConsoleListModel()
 	:ListBoxModel()
 {
-	this->addMessage("test1", ConsoleListModel::MessageType::Info);
+	/*this->addMessage("test1", ConsoleListModel::MessageType::Info);
 	this->addMessage("test2", ConsoleListModel::MessageType::Info);
 	this->addMessage("test3", ConsoleListModel::MessageType::Input);
 	this->addMessage("test4", ConsoleListModel::MessageType::Info);
@@ -16,7 +16,7 @@ ConsoleListModel::ConsoleListModel()
 	this->addMessage("test6", ConsoleListModel::MessageType::Input);
 	this->addMessage("test12345678521234532345654567234545346edr4hrdf5eytr", ConsoleListModel::MessageType::Input);
 	this->addMessage("test345tt6y", ConsoleListModel::MessageType::Error);
-	this->addMessage("test35trwe5t4wetgqe3dgnuesgnbuedrhnged4iroghbyjewsiotgjia3ejmfriowshtgniweshgyuoer5oriywjse4itgwsi4rhygediojuwosayghiedrfnhujhndrutyhw4uthgoeird5i7y", ConsoleListModel::MessageType::Input);
+	this->addMessage("test35trwe5t4wetgqe3dgnuesgnbuedrhnged4iroghbyjewsiotgjia3ejmfriowshtgniweshgyuoer5oriywjse4itgwsi4rhygediojuwosayghiedrfnhujhndrutyhw4uthgoeird5i7y", ConsoleListModel::MessageType::Input);*/
 }
 
 ConsoleListModel::~ConsoleListModel()
@@ -24,24 +24,38 @@ ConsoleListModel::~ConsoleListModel()
 	
 }
 
-void ConsoleListModel::addMessage(const juce::String& message, ConsoleListModel::MessageType type)
+void ConsoleListModel::init(std::function<void(juce::StringRef, MessageType)> clickFunc)
 {
+	this->clickFunc = clickFunc;
+}
+
+void ConsoleListModel::addMessage(juce::StringRef message, ConsoleListModel::MessageType type)
+{
+	this->lock.enterWrite();
 	this->messageList.push_back(std::make_pair(message, type));
+	this->lock.exitWrite();
 }
 
 void ConsoleListModel::clear()
 {
+	this->lock.enterWrite();
 	this->messageList.clear();
+	this->lock.exitWrite();
 }
 
 int ConsoleListModel::getNumRows()
 {
-	return this->messageList.size();
+	this->lock.enterRead();
+	int size = this->messageList.size();
+	this->lock.exitRead();
+	return size;
 }
 
 void ConsoleListModel::paintListBoxItem(int rowNumber, juce::Graphics& g, int width, int height, bool rowIsSelected)
 {
+	this->lock.enterRead();
 	if (!(rowNumber >= 0 && rowNumber < this->messageList.size())) {
+		this->lock.exitRead();
 		return;
 	}
 	const juce::Rectangle<int>& screenArea = Device::getScreenSize();
@@ -95,18 +109,36 @@ void ConsoleListModel::paintListBoxItem(int rowNumber, juce::Graphics& g, int wi
 	int idWidth = std::min(font.getStringWidthFloat(idText) + height, (width - tipWidth - height) / 2.f);
 	g.drawText(idText, tipWidth + height, 0, idWidth, height, juce::Justification::centred);
 
-	g.drawText(pair.first, tipWidth + height + idWidth, 0, width - tipWidth - height - idWidth, height, juce::Justification::centredLeft);
+	g.drawText(
+		pair.first.replace("\r\n", "\n").replaceCharacter('\n', ' ').replaceCharacter('\r', ' '),
+		tipWidth + height + idWidth, 0,
+		width - tipWidth - height - idWidth, height,
+		juce::Justification::centredLeft
+	);
+	
+	this->lock.exitRead();
 }
 
-void ConsoleListModel::listBoxItemClicked(int row, const juce::MouseEvent& e)
+void ConsoleListModel::selectedRowsChanged(int lastRowSelected)
 {
-	
+	this->lock.enterRead();
+	if (lastRowSelected >= 0 && lastRowSelected < this->messageList.size()) {
+		auto& pair = this->messageList[this->messageList.size() - lastRowSelected - 1];
+		this->clickFunc(pair.first, pair.second);
+	}
+	this->lock.exitRead();
 }
 
 juce::String ConsoleListModel::getTooltipForRow(int rowNumber)
 {
+	this->lock.enterRead();
 	if (!(rowNumber >= 0 && rowNumber < this->messageList.size())) {
+		this->lock.exitRead();
 		return "";
 	}
-	return this->messageList[this->messageList.size() - rowNumber - 1].first;
+	
+	juce::String result = this->messageList[this->messageList.size() - rowNumber - 1].first;
+	this->lock.exitRead();
+	
+	return result;
 }

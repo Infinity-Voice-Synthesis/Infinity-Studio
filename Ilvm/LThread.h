@@ -10,46 +10,42 @@ public:
 	~LThread();
 
 	void connect(
-		std::function<void(const juce::String&)> errorMessage,
-		std::function<void(const juce::String&)> normalMessage,
-		std::function<void(const juce::String&)> tStarted,
-		std::function<void(const juce::String&)> tEnded
+		std::function<void(juce::StringRef)> errorMessage,
+		std::function<void(juce::StringRef)> normalMessage,
+		std::function<void(juce::StringRef)> tStarted,
+		std::function<void(juce::StringRef)> tEnded
 	);
 	void disconnect();
 
-	static void set_destory(const juce::String& destoryId);
+	bool doFile(juce::StringRef name);
+	bool doString(juce::StringRef str);
 
-	bool doFile(const juce::String& name);
-	bool doString(const juce::String& str);
+	bool setId(juce::StringRef id);
+	juce::StringRef getId();
 
-	bool setId(const juce::String& id);
-	const juce::String& getId();
-
-	bool destory(const juce::String& id);
+	bool destory(juce::StringRef id);
 
 	void beginGlobalTable();
-	void endGlobalTable(const juce::String& name);
+	void endGlobalTable(juce::StringRef name);
 
-	void beginTable(const juce::String& name);
+	void beginTable(juce::StringRef name);
 	void endTable();
 
-	void addFunction(const juce::String& name, lua_CFunction function);
+	void addFunction(juce::StringRef name, lua_CFunction function);
 
 	void loadUtils();
 
-	bool checkShare(const juce::String& key);
-	void* newShare(const juce::String& key, size_t size);
-	bool removeShare(const juce::String& key);
-	void* getShare(const juce::String& key);
-	size_t sizeShare(const juce::String& key);
+	bool checkShare(juce::StringRef key);
+	void* newShare(juce::StringRef key, size_t size);
+	bool removeShare(juce::StringRef key);
+	void* getShare(juce::StringRef key);
+	size_t sizeShare(juce::StringRef key);
 	bool clearShare();
 	juce::StringArray listShare();
 	void lockShare();
 	void unlockShare();
 
 private:
-	static juce::String destoryId;
-
 	static void hookFunction(lua_State* L, lua_Debug* ar);
 
 	lua_State* lstate = nullptr;
@@ -73,11 +69,11 @@ private:
 	void run()override;
 
 private:
-	std::function<void(const juce::String&)> errorMessage;
-	std::function<void(const juce::String&)> normalMessage;
+	std::function<void(juce::StringRef)> errorMessage;
+	std::function<void(juce::StringRef)> normalMessage;
 
-	std::function<void(const juce::String&)> tStarted;
-	std::function<void(const juce::String&)> tEnded;
+	std::function<void(juce::StringRef)> tStarted;
+	std::function<void(juce::StringRef)> tEnded;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LThread)
 };

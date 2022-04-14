@@ -5,33 +5,33 @@ extern "C" {
 #include "Lua/lstate.h"
 }
 
-std::function<void(const juce::String&)> ILLibs::console_mesFunction;
-std::function<void(const juce::String&)> ILLibs::console_errFunction;
+std::function<void(juce::StringRef)> ILLibs::console_mesFunction;
+std::function<void(juce::StringRef)> ILLibs::console_errFunction;
 std::function<void()> ILLibs::console_clsFunction;
 
-std::function<bool(const juce::String&)> ILLibs::thread_finFunction;
+std::function<bool(juce::StringRef)> ILLibs::thread_finFunction;
 std::function<juce::StringArray()> ILLibs::thread_lstFunction;
-std::function<bool(const juce::String&)> ILLibs::thread_creFunction;
-std::function<bool(const juce::String&)> ILLibs::thread_rmvFunction;
-std::function<bool(const juce::String&)> ILLibs::thread_chkFunction;
-std::function<bool(const juce::String&)> ILLibs::thread_desFunction;
-std::function<bool(const juce::String&, const juce::String&)> ILLibs::thread_runFunction;
-std::function<bool(const juce::String&, const juce::String&)> ILLibs::thread_execFunction;
+std::function<bool(juce::StringRef)> ILLibs::thread_creFunction;
+std::function<bool(juce::StringRef)> ILLibs::thread_rmvFunction;
+std::function<bool(juce::StringRef)> ILLibs::thread_chkFunction;
+std::function<bool(juce::StringRef)> ILLibs::thread_desFunction;
+std::function<bool(juce::StringRef, juce::StringRef)> ILLibs::thread_runFunction;
+std::function<bool(juce::StringRef, juce::StringRef)> ILLibs::thread_execFunction;
 std::function<void()> ILLibs::thread_fluFunction;
 
-std::function<void* (const juce::String&, const juce::String&, size_t)> ILLibs::share_creFunction;
-std::function<bool(const juce::String&, const juce::String&)> ILLibs::share_finFunction;
-std::function<bool(const juce::String&, const juce::String&)> ILLibs::share_rmvFunction;
-std::function<size_t(const juce::String&, const juce::String&)> ILLibs::share_sizFunction;
-std::function<void* (const juce::String&, const juce::String&)> ILLibs::share_getFunction;
-std::function<bool(const juce::String&)> ILLibs::share_cleFunction;
-std::function<juce::StringArray(const juce::String&)> ILLibs::share_lstFunction;
-std::function<void(const juce::String&)> ILLibs::share_lckFunction;
-std::function<void(const juce::String&)> ILLibs::share_ulkFunction;
+std::function<void* (juce::StringRef, juce::StringRef, size_t)> ILLibs::share_creFunction;
+std::function<bool(juce::StringRef, juce::StringRef)> ILLibs::share_finFunction;
+std::function<bool(juce::StringRef, juce::StringRef)> ILLibs::share_rmvFunction;
+std::function<size_t(juce::StringRef, juce::StringRef)> ILLibs::share_sizFunction;
+std::function<void* (juce::StringRef, juce::StringRef)> ILLibs::share_getFunction;
+std::function<bool(juce::StringRef)> ILLibs::share_cleFunction;
+std::function<juce::StringArray(juce::StringRef)> ILLibs::share_lstFunction;
+std::function<void(juce::StringRef)> ILLibs::share_lckFunction;
+std::function<void(juce::StringRef)> ILLibs::share_ulkFunction;
 
 void ILLibs::reg_mesFunctions(
-	std::function<void(const juce::String&)> console_mesFunction,
-	std::function<void(const juce::String&)> console_errFunction,
+	std::function<void(juce::StringRef)> console_mesFunction,
+	std::function<void(juce::StringRef)> console_errFunction,
 	std::function<void()> console_clsFunction
 )
 {
@@ -41,14 +41,14 @@ void ILLibs::reg_mesFunctions(
 }
 
 void ILLibs::reg_thrFunctions(
-	std::function<bool(const juce::String&)> thread_finFunction,
+	std::function<bool(juce::StringRef)> thread_finFunction,
 	std::function<juce::StringArray()> thread_lstFunction,
-	std::function<bool(const juce::String&)> thread_creFunction,
-	std::function<bool(const juce::String&)> thread_rmvFunction,
-	std::function<bool(const juce::String&)> thread_chkFunction,
-	std::function<bool(const juce::String&)> thread_desFunction,
-	std::function<bool(const juce::String&, const juce::String&)> thread_doFunction,
-	std::function<bool(const juce::String&, const juce::String&)> thread_execFunction,
+	std::function<bool(juce::StringRef)> thread_creFunction,
+	std::function<bool(juce::StringRef)> thread_rmvFunction,
+	std::function<bool(juce::StringRef)> thread_chkFunction,
+	std::function<bool(juce::StringRef)> thread_desFunction,
+	std::function<bool(juce::StringRef, juce::StringRef)> thread_doFunction,
+	std::function<bool(juce::StringRef, juce::StringRef)> thread_execFunction,
 	std::function<void()> thread_fluFunction
 )
 {
@@ -64,15 +64,15 @@ void ILLibs::reg_thrFunctions(
 }
 
 void ILLibs::reg_shrFunctions(
-	std::function<void* (const juce::String&, const juce::String&, size_t)> share_creFunction,
-	std::function<bool(const juce::String&, const juce::String&)> share_finFunction,
-	std::function<bool(const juce::String&, const juce::String&)> share_rmvFunction,
-	std::function<size_t(const juce::String&, const juce::String&)> share_sizFunction,
-	std::function<void* (const juce::String&, const juce::String&)> share_getFunction,
-	std::function<bool(const juce::String&)> share_cleFunction,
-	std::function<juce::StringArray(const juce::String&)> share_lstFunction,
-	std::function<void(const juce::String&)> share_lckFunction,
-	std::function<void(const juce::String&)> share_ulkFunction
+	std::function<void* (juce::StringRef, juce::StringRef, size_t)> share_creFunction,
+	std::function<bool(juce::StringRef, juce::StringRef)> share_finFunction,
+	std::function<bool(juce::StringRef, juce::StringRef)> share_rmvFunction,
+	std::function<size_t(juce::StringRef, juce::StringRef)> share_sizFunction,
+	std::function<void* (juce::StringRef, juce::StringRef)> share_getFunction,
+	std::function<bool(juce::StringRef)> share_cleFunction,
+	std::function<juce::StringArray(juce::StringRef)> share_lstFunction,
+	std::function<void(juce::StringRef)> share_lckFunction,
+	std::function<void(juce::StringRef)> share_ulkFunction
 )
 {
 	ILLibs::share_creFunction = share_creFunction;
