@@ -4,6 +4,9 @@
 class MiscMenu final :
     public Menu
 {
+public:
+    MiscMenu() : Menu() {};
+	
 protected:
     const juce::String getMenuId() const override
     {
@@ -19,5 +22,8 @@ protected:
             {Menu::Item::Type::Normal,"MM_Update",true,false,""}
         };
     };
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MiscMenu)
 };
 

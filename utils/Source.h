@@ -1,7 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 
-class Source
+class Source final
 {
 	static std::unique_ptr<Source> _source;
 
@@ -33,5 +33,7 @@ public:
 private:
 	juce::HashMap<juce::String, Item> list;
 	juce::HashMap<juce::String,std::shared_ptr<juce::DrawableImage>> imageList;
+	
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Source)
 };
 

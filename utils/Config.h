@@ -2,7 +2,7 @@
 
 #include <JuceHeader.h>
 
-class Config
+class Config final
 {
 	static std::unique_ptr<Config> _config;
 public:

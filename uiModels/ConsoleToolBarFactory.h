@@ -2,7 +2,7 @@
 #include <JuceHeader.h>
 #include "ToolBarFactoryBase.h"
 
-class ConsoleToolBarFactory :
+class ConsoleToolBarFactory final :
     public ToolBarFactoryBase
 {
 public:

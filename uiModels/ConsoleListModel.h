@@ -1,7 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 
-class ConsoleListModel :
+class ConsoleListModel final :
     public juce::ListBoxModel
 {
 public:

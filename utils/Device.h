@@ -2,7 +2,7 @@
 
 #include <JuceHeader.h>
 
-class Device
+class Device final
 {
 public:
 	static const juce::Rectangle<int> getScreenSize();

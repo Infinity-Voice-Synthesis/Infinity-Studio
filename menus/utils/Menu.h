@@ -6,6 +6,7 @@ class Menu
 {
 public:
 	Menu();
+	virtual ~Menu() {};
 	void init();
 	
 protected:
@@ -37,5 +38,6 @@ private:
 	juce::String id;
 	std::vector<Item> items;
 
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Menu)
 };
 

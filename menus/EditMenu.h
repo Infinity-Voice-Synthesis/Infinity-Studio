@@ -4,6 +4,9 @@
 class EditMenu final :
     public Menu
 {
+public:
+    EditMenu() : Menu() {};
+
 protected:
     const juce::String getMenuId() const override
     {
@@ -22,5 +25,8 @@ protected:
             {Menu::Item::Type::Normal,"MM_Paste",true,false,""}
         };
     };
+	
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EditMenu)
 };
 

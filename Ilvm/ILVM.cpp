@@ -23,9 +23,11 @@ void ILVM::lStdOut(lua_State* L, const char* data, size_t size)
 
 void ILVM::lStdOutLine(lua_State* L)
 {
+	ILVM::vm->ioLock.lock();
 #pragma warning(disable:6031)
 	ILVM::vm->normalMessage(ILVM::outStrTemp);
 #pragma warning(default:6031)
+	ILVM::vm->ioLock.unlock();
 	ILVM::outStrTemp.clear();
 }
 
@@ -34,9 +36,11 @@ void ILVM::lStdOutErr(lua_State* L, const char* format, const char* data)
 	std::string str;
 	str.reserve(strlen(format) + strlen(data));
 	std::sprintf(str.data(), format, data);
+	ILVM::vm->ioLock.lock();
 #pragma warning(disable:6031)
 	ILVM::vm->errorMessage(juce::String::createStringFromData(str.c_str(), str.size()));
 #pragma warning(default:6031)
+	ILVM::vm->ioLock.unlock();
 }
 
 void ILVM::init(
@@ -59,9 +63,9 @@ void ILVM::init(
 	set_LUA_InfOError(ILVM::lStdOutErr);
 
 	ILLibs::reg_mesFunctions(
-		[](juce::StringRef message) {ILVM::vm->normalMessage(message); },
-		[](juce::StringRef message) {ILVM::vm->errorMessage(message); },
-		[] {ILVM::vm->clearMessage(); }
+		[](juce::StringRef message) {ILVM::vm->ioLock.lock(); ILVM::vm->normalMessage(message); ILVM::vm->ioLock.unlock(); },
+		[](juce::StringRef message) {ILVM::vm->ioLock.lock(); ILVM::vm->errorMessage(message); ILVM::vm->ioLock.unlock(); },
+		[] {ILVM::vm->ioLock.lock(); ILVM::vm->clearMessage(); ILVM::vm->ioLock.unlock(); }
 	);
 	ILLibs::reg_thrFunctions(
 		[](juce::StringRef id) {return ILVM::vm->findThread(id); },
@@ -87,9 +91,9 @@ void ILVM::init(
 	);
 
 	DMH::reg_mesFunctions(
-		[](juce::StringRef message) {ILVM::vm->normalMessage(message); },
-		[](juce::StringRef message) {ILVM::vm->errorMessage(message); },
-		[] {ILVM::vm->clearMessage(); }
+		[](juce::StringRef message) {ILVM::vm->ioLock.lock(); ILVM::vm->normalMessage(message); ILVM::vm->ioLock.unlock(); },
+		[](juce::StringRef message) {ILVM::vm->ioLock.lock(); ILVM::vm->errorMessage(message); ILVM::vm->ioLock.unlock(); },
+		[] {ILVM::vm->ioLock.lock(); ILVM::vm->clearMessage(); ILVM::vm->ioLock.unlock(); }
 	);
 #pragma warning(default:6031)
 }
@@ -116,13 +120,14 @@ ILVM::ILVM()
 
 ILVM::~ILVM()
 {
+	this->ioLock.lock();
+	
 	this->mainThread = nullptr;
 
 	for (auto thread : this->threads) {
 		thread->disconnect();
 		if (thread->isThreadRunning()) {
 			thread->destory(this->destoryId);
-			//thread->stopThread(0);
 			thread->waitForThreadToExit(-1);
 		}
 		delete thread;
@@ -137,6 +142,8 @@ ILVM::~ILVM()
 		delete thread;
 	}
 	this->threads_bin.clear();
+	
+	this->ioLock.unlock();
 }
 
 void ILVM::commandsIn(juce::StringRef command)
@@ -154,18 +161,22 @@ void ILVM::commandsIn(juce::StringRef command)
 
 		this->mainThread->setId(this->mainId);
 
+		this->ioLock.lock();
 		this->normalMessage(ILVM_COPYRIGHT);
 		this->normalMessage(LUA_COPYRIGHT);
+		this->ioLock.unlock();
 
 		this->mainThread->connect(
-			[](juce::StringRef str) {ILVM::errorMessage(str); },
-			[](juce::StringRef str) {ILVM::normalMessage(str); },
+			[](juce::StringRef str) {ILVM::vm->ioLock.lock(); ILVM::errorMessage(str); ILVM::vm->ioLock.unlock(); },
+			[](juce::StringRef str) {ILVM::vm->ioLock.lock(); ILVM::normalMessage(str); ILVM::vm->ioLock.unlock(); },
 			[](juce::StringRef id) {ILVM::on_threadStart(id); },
 			[](juce::StringRef id) {ILVM::on_threadStop(id); }
 		);
 	}
 	if (!this->mainThread->doString(command)) {
+		this->ioLock.lock();
 		this->errorMessage("Can't execute the command!");
+		this->ioLock.unlock();
 	}
 }
 
@@ -204,8 +215,10 @@ void ILVM::mainCritical()
 				this->isSafeMode = true;
 
 				this->mainStop();
+				this->ioLock.lock();
 				this->clearMessage();
 				this->errorMessage("Warning!!!!! The blocked Lua thread has been put into the background. Please save the data immediately and restart the editor!");
+				this->ioLock.unlock();
 			}
 			break;
 		}
@@ -310,12 +323,14 @@ bool ILVM::createThread(juce::StringRef id)
 	this->VMPushAllFunctions(thread);
 	thread->setId(id);
 
+	this->ioLock.lock();
 	this->normalMessage(ILVM_COPYRIGHT);
 	this->normalMessage(LUA_COPYRIGHT);
+	ILVM::vm->ioLock.lock();
 
 	thread->connect(
-		[](juce::StringRef str) {ILVM::errorMessage(str); },
-		[](juce::StringRef str) {ILVM::normalMessage(str); },
+		[](juce::StringRef str) {ILVM::vm->ioLock.lock(); ILVM::errorMessage(str); ILVM::vm->ioLock.unlock(); },
+		[](juce::StringRef str) {ILVM::vm->ioLock.lock(); ILVM::normalMessage(str); ILVM::vm->ioLock.unlock(); },
 		[](juce::StringRef id) {ILVM::on_threadStart(id); },
 		[](juce::StringRef id) {ILVM::on_threadStop(id); }
 	);

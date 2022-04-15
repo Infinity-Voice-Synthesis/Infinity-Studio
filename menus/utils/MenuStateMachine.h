@@ -3,9 +3,10 @@
 #include <JuceHeader.h>
 #include "Menu.h"
 
-class MenuStateMachine
+class MenuStateMachine final
 {
 public:
+	MenuStateMachine() {};
 	void add(Menu::Item* item);
 	void connect(juce::String id, std::function<void(bool)> Func);
 	void reset(juce::String id);
@@ -16,5 +17,7 @@ private:
 	juce::HashMap<juce::String, std::pair<Menu::Item*, std::function<void(bool)>>> list;
 
 	std::function<void(juce::StringRef, bool)> activeCallBack = [](juce::StringRef, bool) {};
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MenuStateMachine)
 };
 

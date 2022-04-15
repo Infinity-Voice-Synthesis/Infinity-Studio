@@ -3,7 +3,7 @@
 #include "TextStateGetter.h"
 #include "ImageStateGetter.h"
 
-class Utils
+class Utils final
 {
 public:
 	static void init();

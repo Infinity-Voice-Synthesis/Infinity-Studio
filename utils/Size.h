@@ -1,6 +1,6 @@
 #pragma once
 
-class Size
+class Size final
 {
 public:
 	static double menuBar_height;

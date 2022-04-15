@@ -18,7 +18,7 @@ public:
     StatusBarButton(const int iid, ShowType showType, juce::StringRef buttonText,
         std::unique_ptr<juce::Drawable> normalIm,
         std::unique_ptr<juce::Drawable> toggledOnIm);
-    ~StatusBarButton();
+   virtual ~StatusBarButton();
 
     bool getToolbarItemSizes(int toolbarDepth, bool isToolbarVertical, int& preferredSize,
         int& minSize, int& maxSize) override;

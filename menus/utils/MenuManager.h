@@ -4,18 +4,19 @@
 #include "MenuStateMachine.h"
 #include "utils/Config.h"
 
-class MenuManager
+class MenuManager final
 {
 	static std::unique_ptr<MenuManager> _menuManager;
 	static std::unique_ptr<MenuStateMachine> _menuStateMachine;
 
 public:
 	MenuManager();
+	~MenuManager();
 
 	static void init();
 	static void destory();
 
-	static void add(std::shared_ptr<Menu> menu);
+	static void add(Menu* menu);
 
 	static juce::PopupMenu get(juce::String id);
 
@@ -28,8 +29,10 @@ public:
 	static void reset(juce::String id);
 
 private:
-	juce::HashMap<juce::String, std::shared_ptr<Menu>> list;
+	juce::HashMap<juce::String, Menu*> list;
 
 	juce::PopupMenu DFS(juce::String id);
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MenuManager)
 };
 

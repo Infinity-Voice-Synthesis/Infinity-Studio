@@ -1,7 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
 
-class Egg
+class Egg final
 {
 	static std::unique_ptr<Egg> _egg;
 public:

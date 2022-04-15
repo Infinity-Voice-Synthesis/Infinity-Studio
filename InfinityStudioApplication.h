@@ -52,6 +52,8 @@ public:
 
         CallBackManager::init();//初始化回调管理器
 
+        MenuManager::connect("MM_Close_Editor", [this](bool) {this->systemRequestedQuit(); });//菜单退出编辑器
+		
         this->mainWindow = std::make_unique<MainWindow>(getApplicationName());
         this->mainWindow->init();
         this->mainWindow->setVisible(true);
@@ -59,19 +61,20 @@ public:
 
     void shutdown() override
     {
-        this->mainWindow = nullptr;
-    };
-
-    void systemRequestedQuit() override
-    {
+        ILVM::destory();//先停虚拟机
+        this->mainWindow = nullptr;//再销毁窗口
         CallBackManager::destory();
         google::protobuf::ShutdownProtobufLibrary();
         MenuManager::destory();
         Source::destory();
-        ILVM::destory();
         Config::destory();
         Utils::destory();
         Egg::destory();
+    };
+
+    void systemRequestedQuit() override
+    {
+        this->mainWindow->setVisible(false);
         this->quit();
     };
 

@@ -4,6 +4,9 @@
 class ProjectMenu final :
     public Menu
 {
+public:
+    ProjectMenu() : Menu() {};
+
 protected:
     const juce::String getMenuId() const override
     {
@@ -26,5 +29,8 @@ protected:
             {Menu::Item::Type::Normal,"MM_Voice_Library",true,false,""}
         };
     };
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ProjectMenu)
 };
 

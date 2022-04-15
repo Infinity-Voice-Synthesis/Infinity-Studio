@@ -3,7 +3,7 @@
 #include "Lua/lua.hpp"
 #include <JuceHeader.h>
 
-class ILLibs
+class ILLibs final
 {
 	static std::function<void(juce::StringRef)> console_mesFunction;
 	static std::function<void(juce::StringRef)> console_errFunction;

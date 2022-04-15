@@ -2,7 +2,7 @@
 #include <JuceHeader.h>
 #include "uiModels/ConsoleToolBarFactory.h"
 
-class ConsoleToolBar :
+class ConsoleToolBar final :
     public juce::Toolbar
 {
 public:

@@ -85,6 +85,8 @@ public:
 
 	static std::function<void(void)> mainStart;
 	static std::function<void(void)> mainStop;
+	
+	std::mutex ioLock;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ILVM)
 };

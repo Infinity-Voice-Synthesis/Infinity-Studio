@@ -6,7 +6,7 @@ class ToolBarFactoryBase :
 {
 public:
     ToolBarFactoryBase();
-    ~ToolBarFactoryBase();
+    virtual ~ToolBarFactoryBase();
 
     void getAllToolbarItemIds(juce::Array<int>& ids)override;
     void getDefaultItemSet(juce::Array<int>& ids)override;

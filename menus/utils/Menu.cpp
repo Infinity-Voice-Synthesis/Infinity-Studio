@@ -9,5 +9,5 @@ void Menu::init()
 {
 	this->id = this->getMenuId();
 	this->items = this->getItemList();
-	MenuManager::add(std::shared_ptr<Menu>(this));
+	MenuManager::add(this);
 }

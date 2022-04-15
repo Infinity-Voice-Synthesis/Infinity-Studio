@@ -4,6 +4,9 @@
 class ModifyMenu final :
     public Menu
 {
+public:
+    ModifyMenu() : Menu() {};
+
 protected:
     const juce::String getMenuId() const override
     {
@@ -29,5 +32,8 @@ protected:
             {Menu::Item::Type::Normal,"MM_Manage_Parameter_Pattern",true,false,""}
         };
     };
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ModifyMenu)
 };
 

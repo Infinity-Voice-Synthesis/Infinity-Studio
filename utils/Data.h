@@ -2,7 +2,7 @@
 
 #include <JuceHeader.h>
 
-class Data
+class Data final
 {
 public:
 	static juce::Colour parseStringToColour(const juce::String& s);

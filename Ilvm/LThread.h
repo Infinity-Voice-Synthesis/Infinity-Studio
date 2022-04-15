@@ -3,7 +3,7 @@
 #include "Lua/lua.hpp"
 #include "llibs/ILLibs.h"
 
-class LThread : public juce::Thread
+class LThread final : public juce::Thread
 {
 public:
 	LThread();

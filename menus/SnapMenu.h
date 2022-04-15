@@ -4,6 +4,9 @@
 class SnapMenu final :
     public Menu
 {
+public:
+    SnapMenu() : Menu() {};
+
 protected:
     const juce::String getMenuId() const override
     {
@@ -24,5 +27,8 @@ protected:
             {Menu::Item::Type::SingleSelectable,"MM_Snap_Off",true,false,"MM_Snap_Group"}
         };
     };
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SnapMenu)
 };
 

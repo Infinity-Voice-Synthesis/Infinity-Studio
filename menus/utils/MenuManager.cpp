@@ -9,6 +9,13 @@ MenuManager::MenuManager()
 
 }
 
+MenuManager::~MenuManager()
+{
+	for (auto i : this->list) {
+		delete i;
+	}
+}
+
 void MenuManager::init()
 {
 	(new FileMenu)->init();
@@ -31,7 +38,7 @@ void MenuManager::destory()
 	MenuManager::_menuManager = nullptr;
 }
 
-void MenuManager::add(std::shared_ptr<Menu> menu)
+void MenuManager::add(Menu* menu)
 {
 	MenuManager::_menuManager->list.set(menu->id, menu);
 	for (auto& i : menu->items) {

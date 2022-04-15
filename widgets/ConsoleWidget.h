@@ -3,7 +3,7 @@
 #include "ConsoleToolBar.h"
 #include "ConsoleResultWidget.h"
 
-class ConsoleWidget :
+class ConsoleWidget final :
     public juce::Component
 {
 public:

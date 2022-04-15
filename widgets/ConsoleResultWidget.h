@@ -2,7 +2,7 @@
 #include <JuceHeader.h>
 #include "uiModels/ConsoleListModel.h"
 
-class ConsoleResultWidget :
+class ConsoleResultWidget final :
     public juce::Component
 {
 public:

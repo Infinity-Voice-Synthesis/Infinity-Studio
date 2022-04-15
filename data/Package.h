@@ -4,7 +4,7 @@
 #include <list>
 #include <map>
 
-class Package
+class Package final
 {
 	static Package _package;
 

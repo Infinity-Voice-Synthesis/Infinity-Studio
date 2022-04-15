@@ -4,6 +4,9 @@
 class ViewMenu final :
     public Menu
 {
+public:
+    ViewMenu() : Menu() {};
+
 protected:
     const juce::String getMenuId() const override
     {
@@ -29,5 +32,8 @@ protected:
             {Menu::Item::Type::Checkable,"MM_Show_Other_Tracks",true,true,""}
         };
     };
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ViewMenu)
 };
 

@@ -4,6 +4,9 @@
 class TransportMenu final :
     public Menu
 {
+public:
+    TransportMenu() : Menu() {};
+
 protected:
     const juce::String getMenuId() const override
     {
@@ -19,5 +22,8 @@ protected:
             {Menu::Item::Type::Checkable,"MM_Follow_the_Pointer",true,true,""}
         };
     };
+
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TransportMenu)
 };
 

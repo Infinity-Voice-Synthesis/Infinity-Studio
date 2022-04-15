@@ -4,6 +4,9 @@
 class ConfigMenu final :
     public Menu
 {
+public:
+    ConfigMenu() : Menu() {};
+	
 protected:
     const juce::String getMenuId() const override
     {
@@ -22,5 +25,8 @@ protected:
             {Menu::Item::Type::Normal,"MM_Account",true,false,""}
         };
     };
+	
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConfigMenu)
 };
 
