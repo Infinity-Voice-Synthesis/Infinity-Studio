@@ -20,8 +20,8 @@ public:
     void errorMessage(juce::StringRef message);
 	void normalMessage(juce::StringRef message);
 	void clearMessage();
-
-    void codeRunStop();
+	
+    void codeRunStop(bool isRunning);
 
 private:
     std::unique_ptr<juce::CodeDocument> codeDocument;
@@ -41,6 +41,7 @@ private:
 	std::unique_ptr<juce::FileChooser> saveFileChooser;
 	
     void reStr();
+    void codeRunStopClicked();
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConsoleWidget)
 };

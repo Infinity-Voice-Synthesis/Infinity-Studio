@@ -6,7 +6,9 @@ ConsoleResultWidget::ConsoleResultWidget()
 	:Component()
 {
 	this->textEditor = std::make_unique<juce::TextEditor>();
-	this->textEditor->setMultiLine(true);
+	this->textEditor->setMultiLine(true, false);
+	this->textEditor->setBufferedToImage(true);
+	this->textEditor->setJustification(juce::Justification::topLeft);
 	this->textEditor->setReadOnly(true);
 	this->addChildComponent(this->textEditor.get());
 	this->textEditor->setVisible(true);
@@ -75,6 +77,7 @@ void ConsoleResultWidget::addMessage(juce::StringRef message, ConsoleListModel::
 	this->listModel->addMessage(message, type);
 	const juce::MessageManagerLock lock;
 	this->listBox->updateContent();
+	this->listBox->selectRow(-1);
 	this->listBox->selectRow(0);
 }
 

@@ -11,7 +11,8 @@ public:
 
     void init(std::function<void(void)> codeRunStop);
 
-    void RunStopChanged(juce::StringRef id);
+    void runStopChanged(juce::StringRef id);
+    void changeRunStop(bool isRunning);
 
 private:
     std::unique_ptr<ConsoleToolBarFactory> consoleToolBarFactory;

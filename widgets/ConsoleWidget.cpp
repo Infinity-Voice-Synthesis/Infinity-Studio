@@ -64,7 +64,8 @@ ConsoleWidget::~ConsoleWidget()
 
 void ConsoleWidget::init()
 {
-	this->consoleToolBar->init([this] {this->codeRunStop(); });
+	auto ptrCodeRunStopClicked = &ConsoleWidget::codeRunStopClicked;
+	this->consoleToolBar->init([this, ptrCodeRunStopClicked] {(this->*ptrCodeRunStopClicked)(); });
 
 	juce::CodeDocument* codeDocument = this->codeDocument.get();
 	auto funcCodeChange = [codeDocument](juce::StringRef message)
@@ -105,6 +106,10 @@ void ConsoleWidget::init()
 		[this](juce::StringRef mes) {this->normalMessage(mes); }
 	);
 	CallBackManager::set<void(void)>("lambda_ConsoleWidget_ClearMessage_void", [this] {this->clearMessage(); });
+	CallBackManager::set<void(bool)>(
+		"lambda_ConsoleWidget_CodeRunStop_bool",
+		[this](bool isRunning) {this->codeRunStop(isRunning); }
+	);
 }
 
 void ConsoleWidget::resized()
@@ -194,7 +199,7 @@ void ConsoleWidget::save()
 	}
 }
 
-void ConsoleWidget::codeRunStop()
+void ConsoleWidget::codeRunStopClicked()
 {
 	bool isRuning = false;
 	CallBackManager::call<void(bool*)>("lambda_StatusBar_VMRunning_bool&", &isRuning);
@@ -221,4 +226,9 @@ void ConsoleWidget::normalMessage(juce::StringRef message)
 void ConsoleWidget::clearMessage()
 {
 	this->consoleResultWidget->clear();
+}
+
+void ConsoleWidget::codeRunStop(bool isRunning)
+{
+	this->consoleToolBar->changeRunStop(isRunning);
 }

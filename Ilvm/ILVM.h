@@ -3,7 +3,7 @@
 #include <JuceHeader.h>
 #include "LThread.h"
 
-constexpr auto ILVM_COPYRIGHT = "Infinity Studio Script Interpreter 1.0.0" "  Copyright (C) 2019-2022 Infinity Synthesis Team";
+constexpr auto ILVM_COPYRIGHT = "Infinity Studio Script Interpreter 2.0.0" "  Copyright (C) 2019-2022 Infinity Synthesis Team";
 
 class ILVM final
 {

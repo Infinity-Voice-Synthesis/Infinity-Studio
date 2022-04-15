@@ -36,6 +36,7 @@ void StatusBar::init()
 		[&VMIsRunning, this](bool startStop) 
 		{
 			VMIsRunning = startStop;
+			CallBackManager::call<void(bool)>("lambda_ConsoleWidget_CodeRunStop_bool", startStop);
 			this->refreshItemText("SB_VirtualMachineState"); 
 		}
 	);
@@ -56,7 +57,7 @@ void StatusBar::refreshItemText(juce::StringRef id)
 
 	StatusBarButton* button = dynamic_cast<StatusBarButton*>(this->getItemComponent(item.first));
 	button->setButtonText(item.second.textFunc(id));
-	button->resized();
+	this->updateAllItemPositions(true);
 }
 
 void StatusBar::refreshItemIcon(juce::StringRef id)
@@ -70,4 +71,5 @@ void StatusBar::refreshItemIcon(juce::StringRef id)
 	StatusBarButton* button = dynamic_cast<StatusBarButton*>(this->getItemComponent(item.first));
 	button->setButtonNormalIcon(std::move(item.second.iconFunc(id)));
 	button->setButtonToggledIcon(std::move(item.second.iconFunc(id)));
+	this->updateAllItemPositions(true);
 }
