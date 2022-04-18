@@ -204,6 +204,13 @@ void ConsoleWidget::codeRunStopClicked()
 	bool isRuning = false;
 	CallBackManager::call<void(bool*)>("lambda_StatusBar_VMRunning_bool&", &isRuning);
 	if (isRuning) {
+		/*if (juce::AlertWindow::showOkCancelBox(
+			juce::MessageBoxIconType::WarningIcon,
+			Config::tr("VMC_Title"),
+			Config::tr("VMC_Message")
+		)) {
+			ILVM::stop();
+		}*/
 		ILVM::stop();
 	}
 	else {

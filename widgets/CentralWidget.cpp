@@ -43,6 +43,14 @@ void CentralWidget::init()
 		"lambda_CentralWidget_ConsoleExit_void",
 		[this] {this->consoleVisibleChange(); }
 	);
+	CallBackManager::set<void(void)>(
+		"lambda_CentralWidget_VMStateChange_void",
+		[this] {this->openConsole(); }
+	);
+	CallBackManager::set<void(void)>(
+		"lambda_CentralWidget_VMErrorShow_void",
+		[this] {this->openConsole(); }
+	);
 	MenuManager::connect(
 		"MM_Shell_View",
 		[this](bool actived) {this->openConsole(); }

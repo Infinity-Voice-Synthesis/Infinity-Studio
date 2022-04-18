@@ -23,6 +23,7 @@
 #include "Infinity/IIO.h"
 
 static int luaB_print (lua_State *L) {
+  LUA_OChar_Lock();
   int n = lua_gettop(L);  /* number of arguments */
   int i;
   for (i = 1; i <= n; i++) {  /* for each argument */
@@ -49,6 +50,7 @@ static int luaB_print (lua_State *L) {
   else {
       get_LUA_InfOLine()(L);
   }
+  LUA_OChar_Unlock();
   return 0;
 }
 

@@ -19,3 +19,7 @@ LUA_InfOChar_Function get_LUA_InfOChar();
 LUA_InfOLine_Function get_LUA_InfOLine();
 
 LUA_InfOError_Function get_LUA_InfOError();
+
+void LUA_OChar_Lock();
+void LUA_OChar_Unlock();
+

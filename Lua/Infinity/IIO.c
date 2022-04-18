@@ -1,4 +1,5 @@
 #include "IIO.h"
+#include <stdbool.h>
 
 static LUA_InfOChar_Function LUA_InfOChar;
 static LUA_InfOLine_Function LUA_InfOLine;
@@ -32,4 +33,23 @@ LUA_InfOLine_Function get_LUA_InfOLine()
 LUA_InfOError_Function get_LUA_InfOError()
 {
 	return LUA_InfOError;
+}
+
+#define LOCK_ENABLE 0
+
+static bool OChar_Locked = false;
+
+void LUA_OChar_Lock()
+{
+#if LOCK_ENABLE
+	while (OChar_Locked);
+	OChar_Locked = true;
+#endif
+}
+
+void LUA_OChar_Unlock()
+{
+#if LOCK_ENABLE
+	OChar_Locked = false;
+#endif
 }

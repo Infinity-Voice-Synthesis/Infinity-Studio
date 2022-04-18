@@ -2,6 +2,10 @@
 #include "llibs/ILLibs.h"
 #include "llibs/DMH.h"
 
+extern "C" {
+#include "Lua/lstate.h"
+}
+
 //In this file,there were many ass warnings C6031,then I disabled the warning C6031 near the places
 //which cause that warning..
 
@@ -17,12 +21,28 @@ std::function<void(void)> ILVM::mainStop;
 
 void ILVM::lStdOut(lua_State* L, const char* data, size_t size)
 {
+	juce::ReadWriteLock* mutex = reinterpret_cast<juce::ReadWriteLock*>(L->thread_mutex);
+	juce::String* pStr = (juce::String*)L->thread_id;
+	mutex->enterRead();
+	if ((*pStr) != ILVM::vm->mainId) {
+		mutex->exitRead();
+		return;
+	}
+	mutex->exitRead();
 	juce::String jstr = juce::String::createStringFromData(data, size);
 	ILVM::outStrTemp.append(jstr, jstr.length());
 }
 
 void ILVM::lStdOutLine(lua_State* L)
 {
+	juce::ReadWriteLock* mutex = reinterpret_cast<juce::ReadWriteLock*>(L->thread_mutex);
+	juce::String* pStr = (juce::String*)L->thread_id;
+	mutex->enterRead();
+	if ((*pStr) != ILVM::vm->mainId) {
+		mutex->exitRead();
+		return;
+	}
+	mutex->exitRead();
 	ILVM::vm->ioLock.lock();
 #pragma warning(disable:6031)
 	ILVM::vm->normalMessage(ILVM::outStrTemp);

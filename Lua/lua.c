@@ -212,6 +212,7 @@ static int docall(lua_State* L, int narg, int nres) {
 
 
 static void print_version(lua_State* L) {
+	LUA_OChar_Lock();
 	if (get_LUA_InfOChar() == NULL) {
 		lua_writestring(LUA_COPYRIGHT, strlen(LUA_COPYRIGHT));
 	}
@@ -224,7 +225,7 @@ static void print_version(lua_State* L) {
 	else {
 		get_LUA_InfOLine()(L);
 	}
-	
+	LUA_OChar_Unlock();
 }
 
 
